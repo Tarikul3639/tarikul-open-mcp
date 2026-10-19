@@ -1,6 +1,8 @@
 {
     "cSpell.words": [
         "Fdashboard",
-        "modelcontextprotocol"
+        "modelcontextprotocol",
+        "PKCE",
+        "Timestamptz"
     ]
 }
