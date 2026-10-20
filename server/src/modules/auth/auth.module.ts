@@ -6,6 +6,7 @@ import { ClientAccessController } from './controllers/client-access.controller';
 import { CalendarController } from './controllers/calendar.controller';
 
 import { GoogleAuthService } from './services/google-auth.service';
+import { OAuthStateService } from './services/oauth-state.service';
 import { AuthUserService } from './services/auth-user.service';
 import { ClientAccessService } from './services/client-access.service';
 import { CalendarService } from './services/calendar.service';
@@ -21,6 +22,7 @@ import { SessionGuard } from './guards/session.guard';
   ],
   providers: [
     GoogleAuthService,
+    OAuthStateService,
     AuthUserService,
     ClientAccessService,
     CalendarService,
@@ -29,6 +31,7 @@ import { SessionGuard } from './guards/session.guard';
   ],
   exports: [
     GoogleAuthService,
+    OAuthStateService,
     AuthUserService,
     ClientAccessService,
     CalendarService,
