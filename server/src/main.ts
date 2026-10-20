@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import cookieParser from 'cookie-parser';
 
 import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
@@ -8,6 +9,10 @@ import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  
+  // Enable cookie parsing for incoming requests.
+  app.use(cookieParser());
+
   const config = app.get(ConfigService);
 
   const port = config.getOrThrow<number>('PORT');
@@ -27,6 +32,8 @@ async function bootstrap(): Promise<void> {
       'Mcp-Session-Id',
     ],
   });
+
+  app.setGlobalPrefix('api');
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle("Tarikul's Personal MCP Server")

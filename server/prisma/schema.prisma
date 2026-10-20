@@ -8,25 +8,70 @@ datasource db {
   provider = "postgresql"
 }
 
+model User {
+  id        String   @id @default(cuid())
+  googleId  String   @unique @map("google_id")
+  email     String   @unique
+  name      String?
+  picture   String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  sessions           AuthSession[]
+  clientAccesses     McpClientAccess[]
+  authorizationCodes McpAuthorizationCode[]
+  refreshTokens      McpRefreshToken[]
+  calendarAccount    GoogleCalendarAccount?
+
+  @@map("users")
+}
+
+model AuthSession {
+  id        String    @id @default(cuid())
+  tokenHash String    @unique @map("token_hash")
+  userId    String    @map("user_id")
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("auth_sessions")
+}
+
+model OAuthState {
+  state     String   @id
+  userId    String   @map("user_id")
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([expiresAt])
+  @@map("oauth_states")
+}
+
 model McpOauthClient {
-  clientId      String                 @id @map("client_id")
-  clientSecret  String?                @map("client_secret")
-  redirectUris  Json                   @default("[]") @map("redirect_uris")
-  clientName    String?                @map("client_name")
-  createdAt     DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
-  grants        McpOauthGrant[]
-  codes         McpAuthorizationCode[]
-  refreshTokens McpRefreshToken[]
+  clientId       String                 @id @map("client_id")
+  clientSecret   String?                @map("client_secret")
+  redirectUris   Json                   @default("[]") @map("redirect_uris")
+  clientName     String?                @map("client_name")
+  createdAt      DateTime               @default(now()) @map("created_at") @db.Timestamptz(6)
+  clientAccesses McpClientAccess[]
+  codes          McpAuthorizationCode[]
+  refreshTokens  McpRefreshToken[]
 
   @@map("mcp_oauth_clients")
 }
 
-model McpOauthGrant {
-  userId    String         @map("user_id")
-  clientId  String         @map("client_id")
-  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  revokedAt DateTime?      @map("revoked_at") @db.Timestamptz(6)
-  client    McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+model McpClientAccess {
+  userId    String    @map("user_id")
+  clientId  String    @map("client_id")
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(6)
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
 
   @@id([userId, clientId])
   @@index([userId, createdAt(sort: Desc)])
@@ -34,28 +79,32 @@ model McpOauthGrant {
 }
 
 model McpAuthorizationCode {
-  code                String         @id
-  clientId            String         @map("client_id")
-  redirectUri         String         @map("redirect_uri")
-  codeChallenge       String         @map("code_challenge")
-  codeChallengeMethod String         @default("S256") @map("code_challenge_method")
-  userId              String         @map("user_id")
-  expiresAt           DateTime?      @map("expires_at") @db.Timestamptz(6)
-  createdAt           DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  client              McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  code                String    @id
+  clientId            String    @map("client_id")
+  redirectUri         String    @map("redirect_uri")
+  codeChallenge       String    @map("code_challenge")
+  codeChallengeMethod String    @default("S256") @map("code_challenge_method")
+  userId              String    @map("user_id")
+  expiresAt           DateTime? @map("expires_at") @db.Timestamptz(6)
+  createdAt           DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
 
   @@map("mcp_authorization_codes")
 }
 
 model McpRefreshToken {
-  tokenHash String         @id @map("token_hash")
-  clientId  String         @map("client_id")
-  userId    String         @map("user_id")
-  familyId  String         @map("family_id")
-  expiresAt DateTime?      @map("expires_at") @db.Timestamptz(6)
-  usedAt    DateTime?      @map("used_at") @db.Timestamptz(6)
-  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz(6)
-  client    McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
+  tokenHash String    @id @map("token_hash")
+  clientId  String    @map("client_id")
+  userId    String    @map("user_id")
+  familyId  String    @map("family_id")
+  expiresAt DateTime? @map("expires_at") @db.Timestamptz(6)
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  user   User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  client McpOauthClient @relation(fields: [clientId], references: [clientId], onDelete: Cascade)
 
   @@index([userId])
   @@index([familyId])
@@ -64,12 +113,13 @@ model McpRefreshToken {
 }
 
 model GoogleCalendarAccount {
-  userId    String   @id @map("user_id")
-  tokens    Json
-  email     String
-  name      String?
-  picture   String?
-  updatedAt DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamptz(6)
+  userId String @id @map("user_id")
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tokens Json
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("google_calendar_accounts")
 }

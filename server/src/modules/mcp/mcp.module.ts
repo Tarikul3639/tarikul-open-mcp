@@ -1,14 +1,18 @@
 import { Module } from '@nestjs/common';
-import { CalendarModule } from '../calendar/calendar.module';
-import { OAuthModule } from '../oauth/oauth.module';
-import { GoogleModule } from '../google/google.module';
-import { McpController } from './mcp.controller';
-import { McpAuthService } from './services/mcp-auth.service';
+import { McpModule as NestMcpModule } from '@nestjs-mcp/server';
 import { McpService } from './services/mcp.service';
+import { HealthService } from './services/health.service';
+import { HealthTool } from './tools/health.tool';
 
 @Module({
-  imports: [OAuthModule, GoogleModule, CalendarModule],
-  controllers: [McpController],
-  providers: [McpAuthService, McpService],
+  imports: [NestMcpModule.forRoot({
+    name: 'My MCP Server',
+    version: '1.0.0',
+  }),],
+  providers: [
+    McpService,
+    HealthService,
+    HealthTool,
+  ],
 })
-export class McpModule {}
+export class McpModule { }

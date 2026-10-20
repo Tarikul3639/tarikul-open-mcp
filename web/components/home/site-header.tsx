@@ -1,4 +1,3 @@
-
 "use client"
 
 import { LoaderCircle, Plug, UserRound } from "lucide-react"
@@ -8,18 +7,13 @@ import { Space_Grotesk } from "next/font/google"
 import { useEffect, useState } from "react"
 import axios from "axios"
 import { Button } from "@/components/ui/button"
+import type { User as UserResponseDto } from "@/types/user"
 
 const font = Space_Grotesk({
   subsets: ["latin"],
   display: "swap",
   weight: ["400", "500", "600", "700"],
 })
-
-type User = {
-  name: string
-  email?: string
-  picture?: string | null
-}
 
 function ProfileSkeleton() {
   return (
@@ -36,7 +30,7 @@ function ProfileSkeleton() {
 }
 
 export default function SiteHeader() {
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<UserResponseDto | null>(null)
   const [loading, setLoading] = useState(true)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
 
@@ -45,12 +39,15 @@ export default function SiteHeader() {
 
     async function loadUser() {
       try {
-        const response = await axios.get("/api/auth/me", {
-          withCredentials: true,
-          signal: controller.signal,
-        })
+        const response = await axios.get<UserResponseDto>(
+          "/api/auth/me",
+          {
+            withCredentials: true,
+            signal: controller.signal,
+          },
+        )
 
-        setUser(response.data?.user ?? null)
+        setUser(response.data)
       } catch (error) {
         if (
           !controller.signal.aborted &&
@@ -74,7 +71,7 @@ export default function SiteHeader() {
     if (isLoggingIn) return
 
     setIsLoggingIn(true)
-    window.location.href = "/api/auth/login?next=%2Fdashboard"
+    window.location.href = "/api/auth/google?next=%2Fdashboard"
   }
 
   return (

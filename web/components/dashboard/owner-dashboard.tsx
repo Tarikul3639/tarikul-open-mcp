@@ -3,16 +3,19 @@
 import axios from "axios"
 import { CalendarDays, LoaderCircle, ShieldCheck } from "lucide-react"
 import { useCallback, useEffect, useState } from "react"
+import type { User } from "@/types/user"
 import { Button } from "@/components/ui/button"
-import { OwnerDashboardAccount, type User } from "./owner-dashboard-account"
-import {
-  OwnerDashboardConnections,
-  type ClientAccess,
-} from "./owner-dashboard-connections"
+import { OwnerDashboardAccount } from "./owner-dashboard-account"
+import { OwnerDashboardConnections } from "./owner-dashboard-connections"
+import type { ClientAccess } from "@/types/client-access"
 
 type Status = "checking" | "online" | "degraded"
 
-const LOGIN_HREF = "/api/auth/login?next=%2Fdashboard"
+interface ClientsResponseDto {
+  clients: ClientAccess[]
+}
+
+const LOGIN_HREF = "/api/auth/google?next=%2Fdashboard"
 
 const STATUS: Record<Status, { label: string; dot: string }> = {
   checking: { label: "Checking", dot: "bg-[#6B6B6B]" },
@@ -24,20 +27,22 @@ const isAbort = (reason: unknown) =>
   axios.isCancel(reason) ||
   (axios.isAxiosError(reason) && reason.code === "ERR_CANCELED")
 
-async function fetchUser(signal?: AbortSignal): Promise<User | null> {
-  const response = await axios.get("/api/auth/me", {
+async function fetchUser(signal?: AbortSignal): Promise<User> {
+  const response = await axios.get<User>("/api/auth/me", {
     signal,
+    withCredentials: true,
     headers: { "Cache-Control": "no-cache" },
   })
 
-  return response.data?.user ?? null
+  return response.data
 }
 
 async function fetchClientAccess(
   signal?: AbortSignal
 ): Promise<ClientAccess[]> {
-  const response = await axios.get("/api/auth/clients", {
+  const response = await axios.get<ClientsResponseDto>("/api/auth/clients", {
     signal,
+    withCredentials: true,
     headers: { "Cache-Control": "no-cache" },
   })
 

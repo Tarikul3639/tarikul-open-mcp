@@ -1,5 +1,6 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import axios from "axios"
 import {
   CalendarDays,
@@ -8,14 +9,9 @@ import {
   LoaderCircle,
   ShieldCheck,
   Unplug,
+  Link2,
 } from "lucide-react"
-
-export type ClientAccess = {
-  client_id: string
-  client_name: string | null
-  granted_at: string
-  revoked_at: string | null
-}
+import type { ClientAccess } from "@/types/client-access"
 
 type OwnerDashboardConnectionsProps = {
   clients: ClientAccess[]
@@ -40,6 +36,72 @@ export function OwnerDashboardConnections({
   onBusyChange,
   onRevokingClientChange,
 }: OwnerDashboardConnectionsProps) {
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(
+    null
+  )
+  const [calendarLoading, setCalendarLoading] = useState(true)
+
+  useEffect(() => {
+    let active = true
+
+    async function loadCalendarStatus() {
+      try {
+        const response = await axios.get("/api/auth/calendar/status")
+
+        if (active) {
+          setCalendarConnected(Boolean(response.data.connected))
+        }
+      } catch (reason) {
+        if (active) {
+          onError(
+            axios.isAxiosError(reason)
+              ? (reason.response?.data?.message ??
+                reason.response?.data?.error ??
+                "Could not load Google Calendar status.")
+              : "Could not load Google Calendar status."
+          )
+        }
+      } finally {
+        if (active) setCalendarLoading(false)
+      }
+    }
+
+    void loadCalendarStatus()
+
+    return () => {
+      active = false
+    }
+  }, [onError])
+
+  async function connectCalendar() {
+    if (busy) return
+
+    onBusyChange(true)
+    onError("")
+
+    try {
+      const response = await axios.post("/api/auth/calendar/connect")
+      const authorizationUrl = response.data.authorizationUrl
+
+      if (typeof authorizationUrl !== "string" || !authorizationUrl) {
+        throw new Error("Google Calendar authorization URL was not returned.")
+      }
+
+      window.location.assign(authorizationUrl)
+    } catch (reason) {
+      onError(
+        axios.isAxiosError(reason)
+          ? (reason.response?.data?.message ??
+            reason.response?.data?.error ??
+            "Could not connect Google Calendar.")
+          : reason instanceof Error
+            ? reason.message
+            : "Could not connect Google Calendar."
+      )
+      onBusyChange(false)
+    }
+  }
+
   async function disconnect() {
     if (busy) return
 
@@ -47,14 +109,15 @@ export function OwnerDashboardConnections({
     onError("")
 
     try {
-      await axios.delete("/api/auth/disconnect")
+      await axios.delete("/api/auth/calendar/disconnect")
+      setCalendarConnected(false)
       onDisconnected()
     } catch (reason) {
       onError(
         axios.isAxiosError(reason)
           ? (reason.response?.data?.message ??
             reason.response?.data?.error ??
-            "Could not disconnect this Google account.")
+            "Could not disconnect Google Calendar.")
           : "Could not disconnect this account."
       )
       onBusyChange(false)
@@ -110,33 +173,65 @@ export function OwnerDashboardConnections({
             strokeWidth={2.2}
             className="mt-0.5 shrink-0 text-[#F5C518]"
           />
+
           <div className="min-w-0 flex-1">
             <div className="flex items-center justify-between gap-3">
               <p className="font-semibold">Google Calendar</p>
-              <span className="flex items-center gap-1 text-sm text-[#3DD68C]">
-                <Check size={14} strokeWidth={2.8} />
-                Connected
-              </span>
+
+              {calendarLoading ? (
+                <span className="flex items-center gap-1 text-sm text-[#8A8A8A]">
+                  <LoaderCircle size={14} className="animate-spin" />
+                  Checking
+                </span>
+              ) : calendarConnected === null ? (
+                <span className="flex items-center gap-1 text-sm text-[#FF6B5E]">
+                  <CircleAlert size={14} />
+                  Status unavailable
+                </span>
+              ) : calendarConnected ? (
+                <span className="flex items-center gap-1 text-sm text-[#3DD68C]">
+                  <Check size={14} strokeWidth={2.8} />
+                  Connected
+                </span>
+              ) : (
+                <span className="flex items-center gap-1 text-sm text-[#8A8A8A]">
+                  <CircleAlert size={14} />
+                  Disconnected
+                </span>
+              )}
             </div>
 
             <p className="mt-1 text-sm text-[#8A8A8A]">
               Signed-in MCP clients use this connected calendar.
             </p>
 
-            <button
-              type="button"
-              onClick={() => void disconnect()}
-              disabled={busy}
-              title="Disconnect Google Calendar"
-              className="mt-2.5 inline-flex items-center gap-1.5 text-sm text-[#8A8A8A] transition-colors hover:text-[#FF6B5E] disabled:opacity-50"
-            >
-              {busy ? (
-                <LoaderCircle size={14} className="animate-spin" />
-              ) : (
-                <Unplug size={14} />
-              )}
-              Disconnect Calendar
-            </button>
+            {!calendarLoading && calendarConnected !== null && (
+              <button
+                type="button"
+                onClick={() =>
+                  void (calendarConnected ? disconnect() : connectCalendar())
+                }
+                disabled={busy}
+                title={
+                  calendarConnected
+                    ? "Disconnect Google Calendar"
+                    : "Connect Google Calendar"
+                }
+                className={`mt-2.5 inline-flex items-center gap-1.5 text-sm transition-colors disabled:opacity-50 ${calendarConnected
+                    ? "text-[#8A8A8A] hover:text-[#FF6B5E]"
+                    : "text-[#F5C518] hover:text-white"
+                  }`}
+              >
+                {busy ? (
+                  <LoaderCircle size={14} className="animate-spin" />
+                ) : calendarConnected ? (
+                  <Unplug size={14} />
+                ) : (
+                  <Link2 size={14} />
+                )}
+                {calendarConnected ? "Disconnect Calendar" : "Connect Calendar"}
+              </button>
+            )}
           </div>
         </li>
 
@@ -146,6 +241,7 @@ export function OwnerDashboardConnections({
             strokeWidth={2.2}
             className="mt-0.5 shrink-0 text-[#F5C518]"
           />
+
           <div className="min-w-0 flex-1">
             <p className="font-semibold">MCP access</p>
             <p className="mt-1 text-sm text-[#8A8A8A]">

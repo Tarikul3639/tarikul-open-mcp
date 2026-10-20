@@ -4,12 +4,7 @@ import axios from "axios"
 import { CalendarDays, LoaderCircle, LogOut } from "lucide-react"
 import Image from "next/image"
 import { useState } from "react"
-
-export type User = {
-  name: string
-  email: string
-  picture: string | null
-}
+import type { User } from "@/types/user"
 
 type OwnerDashboardAccountProps = {
   user: User
@@ -30,7 +25,12 @@ export function OwnerDashboardAccount({
     setError("")
 
     try {
-      await axios.delete("/api/auth/session")
+      await axios.post(
+        "/api/auth/logout",
+        {},
+        { withCredentials: true },
+      )
+
       onSignedOut()
     } catch (reason) {
       setError(
@@ -38,7 +38,7 @@ export function OwnerDashboardAccount({
           ? reason.response?.data?.message ??
           reason.response?.data?.error ??
           "Could not sign out. Please try again."
-          : "Could not sign out. Please try again."
+          : "Could not sign out. Please try again.",
       )
     } finally {
       setSigningOut(false)
@@ -52,7 +52,7 @@ export function OwnerDashboardAccount({
           {user.picture ? (
             <Image
               src={user.picture}
-              alt=""
+              alt={`${user.name}'s profile`}
               width={40}
               height={40}
               unoptimized

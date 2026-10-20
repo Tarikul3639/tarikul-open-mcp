@@ -1,27 +1,39 @@
 import { Module } from '@nestjs/common';
-import { CommonModule } from '../../common/common.module';
-import { GoogleModule } from '../google/google.module';
-import { PrismaModule } from '../../prisma/prisma.module';
-import { AuthController } from './auth.controller';
-import { CompleteGoogleLoginService } from './services/complete-google-login.service';
-import { DisconnectGoogleAccountService } from './services/disconnect-google-account.service';
-import { GetProfileService } from './services/get-profile.service';
-import { GetSessionProfileService } from './services/get-session-profile.service';
-import { RequireSessionService } from './services/require-session.service';
-import { SessionUserService } from './services/session-user.service';
-import { StartGoogleLoginService } from './services/start-google-login.service';
+
+import { OAuthController } from './controllers/oauth.controller';
+import { AuthController } from './controllers/auth.controller';
+import { ClientAccessController } from './controllers/client-access.controller';
+import { CalendarController } from './controllers/calendar.controller';
+
+import { GoogleAuthService } from './services/google-auth.service';
+import { AuthUserService } from './services/auth-user.service';
+import { ClientAccessService } from './services/client-access.service';
+import { CalendarService } from './services/calendar.service';
+import { SessionService } from './services/session.service';
+import { SessionGuard } from './guards/session.guard';
 
 @Module({
-  imports: [PrismaModule, GoogleModule, CommonModule],
-  controllers: [AuthController],
+  controllers: [
+    OAuthController,
+    AuthController,
+    ClientAccessController,
+    CalendarController,
+  ],
   providers: [
-    StartGoogleLoginService,
-    CompleteGoogleLoginService,
-    SessionUserService,
-    RequireSessionService,
-    GetSessionProfileService,
-    GetProfileService,
-    DisconnectGoogleAccountService,
+    GoogleAuthService,
+    AuthUserService,
+    ClientAccessService,
+    CalendarService,
+    SessionService,
+    SessionGuard,
+  ],
+  exports: [
+    GoogleAuthService,
+    AuthUserService,
+    ClientAccessService,
+    CalendarService,
+    SessionService,
+    SessionGuard,
   ],
 })
-export class AuthModule {}
+export class AuthModule { }
