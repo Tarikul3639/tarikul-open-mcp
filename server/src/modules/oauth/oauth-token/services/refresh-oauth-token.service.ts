@@ -3,7 +3,7 @@ import { randomBytes } from 'node:crypto';
 import type { OAuthTokenRequestDto } from '../dto/oauth-token-request.dto';
 import { CheckOAuthGrantService } from '../../oauth-client/services/check-oauth-grant.service';
 import { RevokeOAuthGrantService } from '../../oauth-client/services/revoke-oauth-grant.service';
-import { GoogleService } from '@/modules/google/google.service';
+import { GoogleProfileService } from '@/modules/google/services/google-profile.service';
 import { RotateRefreshTokenService } from './rotate-refresh-token.service';
 import { IssueOAuthAccessTokenService } from './issue-oauth-access-token.service';
 
@@ -12,7 +12,7 @@ export class RefreshOAuthTokenService {
   constructor(
     private readonly rotateRefreshToken: RotateRefreshTokenService,
     private readonly checkGrant: CheckOAuthGrantService,
-    private readonly googleService: GoogleService,
+    private readonly googleProfileService: GoogleProfileService,
     private readonly revokeGrant: RevokeOAuthGrantService,
     private readonly issueAccessToken: IssueOAuthAccessTokenService,
   ) {}
@@ -33,9 +33,10 @@ export class RefreshOAuthTokenService {
     if (
       !rotated ||
       !(await this.checkGrant.execute({ userId: rotated.userId, clientId }))
-    ) return { status: 400, body: { error: 'invalid_grant' } };
+    )
+      return { status: 400, body: { error: 'invalid_grant' } };
 
-    if (!(await this.googleService.getProfile(rotated.userId))) {
+    if (!(await this.googleProfileService.execute(rotated.userId))) {
       await this.revokeGrant.execute(rotated.userId, clientId);
       return { status: 400, body: { error: 'invalid_grant' } };
     }
@@ -43,7 +44,10 @@ export class RefreshOAuthTokenService {
     return {
       status: 200,
       body: {
-        access_token: await this.issueAccessToken.execute(rotated.userId, clientId),
+        access_token: await this.issueAccessToken.execute(
+          rotated.userId,
+          clientId,
+        ),
         token_type: 'Bearer',
         expires_in: 900,
         refresh_token: nextToken,

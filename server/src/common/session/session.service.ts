@@ -10,7 +10,7 @@ export class SessionService {
   private readonly key: Uint8Array;
 
   constructor(private readonly config: ConfigService) {
-    this.issuer = this.config.getOrThrow<string>('MCP_BASE_URL');
+    this.issuer = this.config.getOrThrow<string>('WEB_ORIGIN');
 
     const secret = this.config.getOrThrow<string>('MCP_AUTH_SECRET');
 

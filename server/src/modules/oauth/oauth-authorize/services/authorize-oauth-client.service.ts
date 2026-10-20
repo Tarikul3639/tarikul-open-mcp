@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { randomBytes } from 'node:crypto';
 import type { Request } from 'express';
-import { GoogleService } from '@/modules/google/google.service';
+import { GoogleProfileService } from '@/modules/google/services/google-profile.service';
 import { GetOAuthClientRecordService } from '../../oauth-client/services/get-oauth-client-record.service';
 import { EnsureOAuthGrantService } from '../../oauth-client/services/ensure-oauth-grant.service';
 import { CreateAuthorizationCodeService } from './create-authorization-code.service';
@@ -14,20 +14,23 @@ import { SessionService } from '@/common/session/session.service';
 @Injectable()
 export class AuthorizeOAuthClientService {
   private readonly issuer: string;
+  private readonly resource: string;
 
   constructor(
     config: ConfigService,
     private readonly sessionService: SessionService,
-    private readonly googleService: GoogleService,
+    private readonly googleProfileService: GoogleProfileService,
     private readonly getClient: GetOAuthClientRecordService,
     private readonly ensureGrant: EnsureOAuthGrantService,
     private readonly createCode: CreateAuthorizationCodeService,
   ) {
     this.issuer = config.getOrThrow<string>('MCP_BASE_URL');
+    this.resource = `${this.issuer}/api/mcp`;
   }
 
   async execute(query: OAuthAuthorizationQueryDto, request: Request) {
-    const client = query.client_id && (await this.getClient.execute(query.client_id));
+    const client =
+      query.client_id && (await this.getClient.execute(query.client_id));
     const method = query.code_challenge_method ?? 'S256';
     const responseType = query.response_type ?? 'code';
     if (
@@ -37,7 +40,7 @@ export class AuthorizeOAuthClientService {
       !/^[A-Za-z0-9_-]{43,128}$/.test(query.code_challenge ?? '') ||
       method !== 'S256' ||
       responseType !== 'code' ||
-      query.resource !== `${this.issuer}/api/mcp`
+      query.resource !== this.resource
     ) {
       return { status: 400 as const, body: { error: 'invalid_request' } };
     }
@@ -51,10 +54,15 @@ export class AuthorizeOAuthClientService {
         location: `${this.issuer}/api/auth/login?next=${encodeURIComponent(request.originalUrl)}`,
       };
     }
-    if (!(await this.googleService.getProfile(userId))) {
-      return { status: 302 as const, location: `${this.issuer}/?calendar=disconnected` };
+    if (!(await this.googleProfileService.execute(userId))) {
+      return {
+        status: 302 as const,
+        location: `${this.issuer}/?calendar=disconnected`,
+      };
     }
-    if (!(await this.ensureGrant.execute({ userId, clientId: query.client_id! }))) {
+    if (
+      !(await this.ensureGrant.execute({ userId, clientId: query.client_id! }))
+    ) {
       const callback = new URL(query.redirect_uri);
       callback.searchParams.set('error', 'access_denied');
       if (query.state) callback.searchParams.set('state', query.state);

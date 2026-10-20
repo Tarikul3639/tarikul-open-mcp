@@ -3,6 +3,7 @@
         "Fdashboard",
         "modelcontextprotocol",
         "PKCE",
+        "streamable",
         "Timestamptz"
     ]
 }

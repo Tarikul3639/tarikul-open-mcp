@@ -1,6 +1,6 @@
 import type { NextConfig } from "next"
 
-const backendUrl = (process.env.BACKEND_URL || 'http://localhost:3000').replace(/\/$/, '')
+const backendUrl = process.env.BACKEND_URL || "http://localhost:5000"
 
 const nextConfig: NextConfig = {
   turbopack: {
@@ -8,8 +8,11 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     return [
-      { source: '/api/:path*', destination: `${backendUrl}/api/:path*` },
-      { source: '/.well-known/:path*', destination: `${backendUrl}/.well-known/:path*` },
+      { source: "/api/:path*", destination: `${backendUrl}/api/:path*` },
+      {
+        source: "/.well-known/:path*",
+        destination: `${backendUrl}/.well-known/:path*`,
+      },
     ]
   },
 }

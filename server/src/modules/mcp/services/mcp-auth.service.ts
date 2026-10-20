@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { GoogleService } from '../../google/google.service';
+import { GoogleProfileService } from '../../google/services/google-profile.service';
 import { CheckOAuthGrantService } from '../../oauth/oauth-client/services/check-oauth-grant.service';
 import { CheckOAuthAccessTokenService } from '../../oauth/oauth-token/services/check-oauth-access-token.service';
 
@@ -7,7 +7,7 @@ import { CheckOAuthAccessTokenService } from '../../oauth/oauth-token/services/c
 @Injectable()
 export class McpAuthService {
   constructor(
-    private readonly googleService: GoogleService,
+    private readonly googleProfileService: GoogleProfileService,
     private readonly checkAccessToken: CheckOAuthAccessTokenService,
     private readonly checkGrant: CheckOAuthGrantService,
   ) {}
@@ -22,8 +22,11 @@ export class McpAuthService {
     const identity = await this.checkAccessToken.execute(token);
     if (
       !identity ||
-      !(await this.checkGrant.execute({ userId: identity.userId, clientId: identity.clientId })) ||
-      !(await this.googleService.getProfile(identity.userId))
+      !(await this.checkGrant.execute({
+        userId: identity.userId,
+        clientId: identity.clientId,
+      })) ||
+      !(await this.googleProfileService.execute(identity.userId))
     ) {
       return null;
     }

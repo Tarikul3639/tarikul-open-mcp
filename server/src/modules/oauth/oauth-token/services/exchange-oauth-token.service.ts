@@ -6,22 +6,20 @@ import { RefreshOAuthTokenService } from './refresh-oauth-token.service';
 
 @Injectable()
 export class ExchangeOAuthTokenService {
-  private readonly issuer: string;
+  private readonly resource: string;
 
   constructor(
     config: ConfigService,
     private readonly exchangeAuthorizationCode: ExchangeAuthorizationCodeService,
     private readonly refreshOAuthToken: RefreshOAuthTokenService,
   ) {
-    this.issuer = config.getOrThrow<string>('MCP_BASE_URL');
+    this.resource = `${config.getOrThrow<string>('MCP_BASE_URL')}/api/mcp`;
   }
 
   execute(body: OAuthTokenRequestDto) {
     const fail = (error: string) => ({ status: 400, body: { error } });
-    if (
-      !body?.client_id ||
-      (body.resource && body.resource !== `${this.issuer}/api/mcp`)
-    ) return fail('invalid_request');
+    if (!body?.client_id || (body.resource && body.resource !== this.resource))
+      return fail('invalid_request');
 
     if (body.grant_type === 'authorization_code') {
       return this.exchangeAuthorizationCode.execute(body);
