@@ -1,5 +1,4 @@
 {
-  "framework": null,
-  "buildCommand": "pnpm install && pnpm prisma generate && pnpm build",
-  "outputDirectory": "./dist"
+  "framework": "nestjs",
+  "buildCommand": "pnpm prisma generate && pnpm build"
 }
