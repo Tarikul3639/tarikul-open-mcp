@@ -1,5 +1,5 @@
 import { BadRequestException, Logger } from '@nestjs/common';
-import { McpContext, Resolver, Tool, UseGuards } from '@nestjs-mcp/server';
+import { type McpContext, Resolver, Tool, UseGuards } from '@nestjs-mcp/server';
 import { z } from 'zod';
 import { McpAuthGuard } from '@/modules/mcp/guards/mcp-auth.guard';
 import { CalendarService } from './calendar.service';

@@ -1,4 +1,4 @@
-import { McpContext, Resolver, Tool } from '@nestjs-mcp/server';
+import { type McpContext, Resolver, Tool } from '@nestjs-mcp/server';
 import { z } from 'zod';
 
 @Resolver()
