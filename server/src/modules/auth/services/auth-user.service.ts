@@ -74,4 +74,14 @@ export class AuthUserService {
 
         return user;
     }
+
+
+    /**
+     * Permanently deletes a user account and its related records.
+     */
+    async deleteUser(userId: string): Promise<void> {
+        await this.prisma.user.delete({
+            where: { id: userId },
+        });
+    }
 }

@@ -6,22 +6,18 @@ import { useCallback, useEffect, useState } from "react"
 import type { User } from "@/types/user"
 import { Button } from "@/components/ui/button"
 import { OwnerDashboardAccount } from "./owner-dashboard-account"
-import { OwnerDashboardConnections } from "./owner-dashboard-connections"
+import { OwnerDashboardDeleteAccount } from "./owner-dashboard-delete-account"
+import { OwnerDashboardCalendarConnect } from "./owner-dashboard-calendar-connect"
+import { OwnerDashboardCalendarDisconnect } from "./owner-dashboard-calendar-disconnect"
+import { OwnerDashboardClientManagement } from "./owner-dashboard-client-management"
+import { OwnerDashboardHealth } from "./owner-dashboard-health"
 import type { ClientAccess } from "@/types/client-access"
-
-type Status = "checking" | "online" | "degraded"
 
 interface ClientsResponseDto {
   clients: ClientAccess[]
 }
 
 const LOGIN_HREF = "/api/auth/google?next=%2Fdashboard"
-
-const STATUS: Record<Status, { label: string; dot: string }> = {
-  checking: { label: "Checking", dot: "bg-[#6B6B6B]" },
-  online: { label: "Server online", dot: "bg-[#3DD68C]" },
-  degraded: { label: "Service issue", dot: "bg-[#FF6B5E]" },
-}
 
 const isAbort = (reason: unknown) =>
   axios.isCancel(reason) ||
@@ -52,10 +48,11 @@ async function fetchClientAccess(
 export default function OwnerDashboard() {
   const [user, setUser] = useState<User | null>(null)
   const [clients, setClients] = useState<ClientAccess[]>([])
-  const [status, setStatus] = useState<Status>("checking")
   const [loading, setLoading] = useState(true)
-  const [busy, setBusy] = useState(false)
-  const [revokingClient, setRevokingClient] = useState<string | null>(null)
+  const [calendarConnected, setCalendarConnected] = useState<boolean | null>(
+    null
+  )
+  const [calendarLoading, setCalendarLoading] = useState(true)
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [error, setError] = useState("")
 
@@ -66,15 +63,11 @@ export default function OwnerDashboard() {
       const results = await Promise.allSettled([
         fetchUser(signal),
         fetchClientAccess(signal),
-        axios.get("/api/health", {
-          signal,
-          headers: { "Cache-Control": "no-cache" },
-        }),
       ])
 
       if (signal?.aborted) return
 
-      const [userResult, clientsResult, healthResult] = results
+      const [userResult, clientsResult] = results
 
       if (userResult.status === "fulfilled") {
         setUser(userResult.value)
@@ -87,18 +80,32 @@ export default function OwnerDashboard() {
       } else if (!isAbort(clientsResult.reason)) {
         setClients([])
       }
-
-      setStatus(
-        healthResult.status === "fulfilled" &&
-          healthResult.value.status >= 200 &&
-          healthResult.value.status < 300
-          ? "online"
-          : "degraded"
-      )
     } finally {
       if (!signal?.aborted) {
         setLoading(false)
       }
+    }
+  }, [])
+
+  const loadCalendarStatus = useCallback(async () => {
+    setCalendarLoading(true)
+
+    try {
+      const response = await axios.get("/api/auth/calendar/status", {
+        withCredentials: true,
+        headers: { "Cache-Control": "no-cache" },
+      })
+
+      setCalendarConnected(Boolean(response.data.connected))
+    } catch (reason) {
+      setCalendarConnected(null)
+      setError(
+        axios.isAxiosError(reason)
+          ? responseError(reason, "Could not load Google Calendar status.")
+          : "Could not load Google Calendar status."
+      )
+    } finally {
+      setCalendarLoading(false)
     }
   }, [])
 
@@ -107,7 +114,6 @@ export default function OwnerDashboard() {
 
     void loadDashboard(controller.signal).catch(() => {
       if (!controller.signal.aborted) {
-        setStatus("degraded")
         setLoading(false)
       }
     })
@@ -115,7 +121,14 @@ export default function OwnerDashboard() {
     return () => controller.abort()
   }, [loadDashboard])
 
-  const currentStatus = STATUS[status]
+  useEffect(() => {
+    if (user) {
+      void loadCalendarStatus()
+    } else {
+      setCalendarConnected(null)
+      setCalendarLoading(false)
+    }
+  }, [user, loadCalendarStatus])
 
   function handleLogin() {
     if (isLoggingIn) return
@@ -131,11 +144,7 @@ export default function OwnerDashboard() {
     >
       <div className="flex items-center justify-between border-b-2 border-[#2B2B2B] px-5 py-3.5">
         <h2 className="text-base font-bold tracking-tight">Your connections</h2>
-
-        <span className="flex items-center gap-2 text-sm text-[#8A8A8A]">
-          <span className={`h-2 w-2 rounded-full ${currentStatus.dot}`} />
-          {currentStatus.label}
-        </span>
+        <OwnerDashboardHealth />
       </div>
 
       {loading ? (
@@ -191,28 +200,81 @@ export default function OwnerDashboard() {
             onSignedOut={() => {
               setUser(null)
               setClients([])
+              setError("")
             }}
           />
 
-          <OwnerDashboardConnections
-            clients={clients}
-            busy={busy}
-            revokingClient={revokingClient}
-            error={error}
-            onDisconnected={() => {
-              void loadDashboard().catch(() => {
-                setError("Unable to refresh your account. Please try again.")
-                setLoading(false)
-              })
+          <ul className="divide-y divide-white/10 border-t-2 border-[#2B2B2B]">
+            <li className="flex items-start gap-4 px-5 py-4">
+              <CalendarDays
+                size={20}
+                strokeWidth={2.2}
+                className="mt-0.5 shrink-0 text-[#F5C518]"
+              />
+
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center justify-between gap-3">
+                  <p className="font-semibold">Google Calendar</p>
+
+                  {calendarLoading ? (
+                    <span className="flex items-center gap-1 text-sm text-[#8A8A8A]">
+                      <LoaderCircle size={14} className="animate-spin" />
+                      Checking
+                    </span>
+                  ) : calendarConnected === null ? (
+                    <span className="text-sm text-[#FF6B5E]">
+                      Status unavailable
+                    </span>
+                  ) : calendarConnected ? (
+                    <span className="text-sm text-[#3DD68C]">Connected</span>
+                  ) : (
+                    <span className="text-sm text-[#8A8A8A]">Disconnected</span>
+                  )}
+                </div>
+
+                <p className="mt-1 text-sm text-[#8A8A8A]">
+                  Signed-in MCP clients use this connected calendar.
+                </p>
+
+                {!calendarLoading && calendarConnected === false && (
+                  <OwnerDashboardCalendarConnect onError={setError} />
+                )}
+
+                {!calendarLoading && calendarConnected === true && (
+                  <OwnerDashboardCalendarDisconnect
+                    onDisconnected={() => {
+                      setCalendarConnected(false)
+                      setError("")
+                    }}
+                    onError={setError}
+                  />
+                )}
+              </div>
+            </li>
+
+            <OwnerDashboardClientManagement
+              clients={clients}
+              onClientsChanged={setClients}
+              onError={setError}
+            />
+          </ul>
+
+          {error && (
+            <p
+              role="alert"
+              className="flex items-center gap-2 border-t-2 border-[#2B2B2B] px-5 py-3 text-sm text-[#FF6B5E]"
+            >
+              {error}
+            </p>
+          )}
+
+          <OwnerDashboardDeleteAccount
+            onDeleted={() => {
+              setUser(null)
+              setClients([])
+              setError("")
+              window.location.href = "/"
             }}
-            onClientsChanged={setClients}
-            onError={(message) => {
-              setError(message)
-              setBusy(false)
-              setRevokingClient(null)
-            }}
-            onBusyChange={setBusy}
-            onRevokingClientChange={setRevokingClient}
           />
         </>
       )}
@@ -222,5 +284,14 @@ export default function OwnerDashboard() {
         Separate Google account · Per-user credentials · Short-lived MCP tokens
       </div>
     </section>
+  )
+}
+
+function responseError(
+  reason: { response?: { data?: { message?: string; error?: string } } },
+  fallback: string
+) {
+  return (
+    reason.response?.data?.message ?? reason.response?.data?.error ?? fallback
   )
 }

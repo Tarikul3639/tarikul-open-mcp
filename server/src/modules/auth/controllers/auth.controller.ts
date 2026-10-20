@@ -5,6 +5,7 @@ import {
     Post,
     Req,
     Res,
+    Delete,
     Logger,
     UseGuards,
     UnauthorizedException,
@@ -105,6 +106,52 @@ export class AuthController {
 
         return {
             message: 'Logged out successfully',
+        };
+    }
+
+
+    /**
+ * Permanently deletes the authenticated user's account and related records.
+ */
+    @Delete('me')
+    @UseGuards(SessionGuard)
+    @ApiCookieAuth('app_session')
+    @ApiOperation({
+        summary: 'Permanently delete the current user account',
+    })
+    @ApiOkResponse({
+        description: 'User account permanently deleted.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'The session is missing, invalid, or expired.',
+    })
+    async deleteAccount(
+        @Req() req: AuthenticatedRequest,
+        @Res({ passthrough: true }) res: Response,
+    ): Promise<{ message: string }> {
+        const token = req.cookies?.[SESSION_COOKIE] as string | undefined;
+
+        if (!token) {
+            throw new UnauthorizedException('Authentication required');
+        }
+
+        // Permanently deletes the user and related records.
+        await this.authUserService.deleteUser(req.user.userId);
+
+        // Removes the authentication cookie from the browser.
+        res.clearCookie(SESSION_COOKIE, {
+            httpOnly: true,
+            secure: this.env.isProduction,
+            sameSite: 'lax',
+            path: '/',
+        });
+
+        this.logger.warn(
+            `User account permanently deleted: ${req.user.userId}`,
+        );
+
+        return {
+            message: 'User account permanently deleted',
         };
     }
 }
