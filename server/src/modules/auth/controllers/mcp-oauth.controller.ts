@@ -7,6 +7,7 @@ import {
     Query,
     Req,
     Res,
+    Logger,
     UseGuards,
 } from '@nestjs/common';
 import {
@@ -27,6 +28,8 @@ import { McpOauthService } from '../services/mcp-oauth.service';
 export class McpOauthController {
     constructor(private readonly mcpOauthService: McpOauthService) { }
 
+    private readonly logger = new Logger(McpOauthController.name);
+
     @Get('authorize')
     @UseGuards(SessionGuard)
     @ApiBearerAuth()
@@ -42,6 +45,10 @@ export class McpOauthController {
         @Query() query: AuthorizeMcpDto,
         @Res() res: Response,
     ) {
+
+        // DEBUG: Log the authorization request details for debugging purposes.
+        this.logger.log(`Received authorization request from user ${req.user.userId} for client ${query.client_id}`);
+
         const result = await this.mcpOauthService.authorize({
             userId: req.user.userId,
             clientId: query.client_id,

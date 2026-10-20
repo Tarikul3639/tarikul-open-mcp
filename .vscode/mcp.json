@@ -1,0 +1,8 @@
+{
+  "servers": {
+    "personal-mcp-server": {
+      "type": "http",
+      "url": "http://localhost:5000/api/mcp"
+    }
+  }
+}

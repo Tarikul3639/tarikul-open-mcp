@@ -3,6 +3,7 @@ import {
     ExecutionContext,
     Injectable,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { SessionService } from '../services/session.service';
@@ -18,12 +19,16 @@ interface AuthenticatedRequest extends Request {
 export class SessionGuard implements CanActivate {
     constructor(private readonly sessionService: SessionService) { }
 
+    readonly logger = new Logger(SessionGuard.name);
+
     /**
      * Validates the application session before allowing access
      * to protected routes.
      */
     async canActivate(context: ExecutionContext): Promise<boolean> {
         const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
+
+        this.logger.log(`Validating session for request to ${request.method} ${request.url}`);
 
         const token = request.cookies?.app_session as string | undefined;
 

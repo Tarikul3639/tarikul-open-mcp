@@ -1,10 +1,15 @@
-import { McpContext, Resolver, Tool } from '@nestjs-mcp/server';
+import { BadRequestException, Logger } from '@nestjs/common';
+import { McpContext, Resolver, Tool, UseGuards } from '@nestjs-mcp/server';
 import { z } from 'zod';
+import { McpAuthGuard } from '@/modules/mcp/guards/mcp-auth.guard';
 import { CalendarService } from './calendar.service';
 
+@UseGuards(McpAuthGuard)
 @Resolver()
 export class CalendarTools {
     constructor(private readonly calendarService: CalendarService) { }
+    // Logger instance for debugging and logging purposes
+    readonly logger = new Logger(CalendarTools.name);
 
 
     // ──────────────────────────────────────────────────────────────
@@ -27,6 +32,8 @@ export class CalendarTools {
         }),
     })
     async listEvents(input: { maxResults?: number }, ctx: McpContext) {
+        // DEBUG: Log the maxResults parameter for debugging purposes.
+        this.logger.log(`Listing events for user with maxResults=${input.maxResults ?? 10}`);
         const userId = this.getUserId(ctx);
 
         return {
@@ -285,12 +292,9 @@ export class CalendarTools {
     }
 
     private getUserId(ctx: McpContext): string {
-        const authInfo = ctx.http?.authInfo as
-            { extra?: { userId?: string }; userId?: string } | undefined;
+        const userId = ctx.request.auth?.extra?.userId;
 
-        const userId = authInfo?.extra?.userId ?? authInfo?.userId;
-
-        if (!userId) {
+        if (typeof userId !== 'string' || userId.length === 0) {
             throw new Error('Authenticated user ID was not found in MCP context.');
         }
 
