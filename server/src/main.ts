@@ -2,27 +2,29 @@ import 'reflect-metadata';
 import cookieParser from 'cookie-parser';
 
 import { NestFactory } from '@nestjs/core';
-import { ConfigService } from '@nestjs/config';
+import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
+import { EnvService } from '@/config/env.service';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
-  
-  // Enable cookie parsing for incoming requests.
+  const env = app.get(EnvService);
+
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      transform: true,
+      forbidNonWhitelisted: true,
+    }),
+  );
   app.use(cookieParser());
-
-  const config = app.get(ConfigService);
-
-  const port = config.getOrThrow<number>('PORT');
-  const webOrigin = config.getOrThrow<string>('WEB_ORIGIN');
-  const corsOrigins = config.getOrThrow<string[]>('CORS_ORIGINS');
 
   app.getHttpAdapter().getInstance().set('trust proxy', 1);
 
   app.enableCors({
-    origin: [webOrigin, ...corsOrigins],
+    origin: [env.webOrigin, ...env.corsOrigins],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: [
@@ -33,7 +35,12 @@ async function bootstrap(): Promise<void> {
     ],
   });
 
-  app.setGlobalPrefix('api');
+  app.setGlobalPrefix('api', {
+    exclude: [
+      '.well-known/oauth-authorization-server',
+      '.well-known/oauth-protected-resource',
+    ],
+  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle("Tarikul's Personal MCP Server")
@@ -48,10 +55,10 @@ async function bootstrap(): Promise<void> {
     SwaggerModule.createDocument(app, swaggerConfig),
   );
 
-  await app.listen(port, '0.0.0.0');
+  await app.listen(env.port, '0.0.0.0');
 
-  console.log(`🚀 Server: http://localhost:${port}`);
-  console.log(`📚 Docs:   http://localhost:${port}/api/docs`);
+  console.log(`🚀 Server: http://localhost:${env.port}`);
+  console.log(`📚 Docs:   http://localhost:${env.port}/api/docs`);
 }
 
 void bootstrap();
