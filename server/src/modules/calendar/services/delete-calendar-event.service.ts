@@ -1,5 +1,5 @@
 // import { Injectable } from '@nestjs/common';
-// import { GoogleCalendarClientService } from '../../google/services/google-calendar-client.service';
+// import { GoogleCalendarClientService } from '../../google/services/google-calendar-client.service.js';
 
 // @Injectable()
 // export class DeleteCalendarEventService {

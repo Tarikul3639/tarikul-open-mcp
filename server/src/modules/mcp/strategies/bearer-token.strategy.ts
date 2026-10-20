@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 
-import { AccessTokenService } from '../../auth/services/access-token.service';
+import { AccessTokenService } from '../../auth/services/access-token.service.js';
 
 export interface BearerTokenIdentity {
     userId: string;

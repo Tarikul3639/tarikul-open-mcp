@@ -1,5 +1,5 @@
 import { Resolver, Tool } from '@nestjs-mcp/server';
-import { HealthService } from './health.service';
+import { HealthService } from './health.service.js';
 
 @Resolver()
 export class HealthTool {

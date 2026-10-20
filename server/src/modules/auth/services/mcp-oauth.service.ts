@@ -5,9 +5,9 @@ import {
 } from '@nestjs/common';
 import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
-import { PrismaService } from '@/prisma/prisma.service';
-import { EnvService } from '@/config/env.service';
-import { AccessTokenService } from './access-token.service';
+import { PrismaService } from '../../../prisma/prisma.service.js';
+import { EnvService } from '../../../config/env.service.js';
+import { AccessTokenService } from './access-token.service.js';
 
 @Injectable()
 export class McpOauthService {

@@ -2,7 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { SignJWT, jwtVerify } from 'jose';
 
-import { EnvService } from '@/config/env.service';
+import { EnvService } from '../../../config/env.service.js';
 
 @Injectable()
 export class AccessTokenService {

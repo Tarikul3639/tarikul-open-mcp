@@ -3,9 +3,9 @@ import {
     Injectable,
     NotFoundException,
 } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { GoogleProfileDto } from '../dto/google-profile.dto';
-import { CurrentUserResponseDto } from '../dto/current-user-response.dto';
+import { PrismaService } from '../../../prisma/prisma.service.js';
+import { GoogleProfileDto } from '../dto/google-profile.dto.js';
+import { CurrentUserResponseDto } from '../dto/current-user-response.dto.js';
 
 @Injectable()
 export class AuthUserService {

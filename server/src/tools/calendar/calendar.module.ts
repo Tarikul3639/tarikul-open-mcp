@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { CalendarService } from './calendar.service';
-import { CalendarTools } from './calendar.tools';
+import { CalendarService } from './calendar.service.js';
+import { CalendarTools } from './calendar.tools.js';
 
 @Module({
   providers: [CalendarService, CalendarTools],

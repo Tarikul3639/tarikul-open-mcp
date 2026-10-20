@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { GoogleProfileDto } from './google-profile.dto';
+import { GoogleProfileDto } from './google-profile.dto.js';
 
 export class GoogleAuthResponseDto {
     @ApiProperty({

@@ -11,10 +11,10 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import type { Response } from 'express';
-import { EnvService } from '@/config/env.service';
-import { SessionGuard } from '../guards/session.guard';
-import { CalendarService } from '../services/calendar.service';
-import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
+import { EnvService } from '../../../config/env.service.js';
+import { SessionGuard } from '../guards/session.guard.js';
+import { CalendarService } from '../services/calendar.service.js';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface.js';
 
 @ApiTags('Google Calendar')
 @Controller('auth/calendar')

@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import type { McpExecutionContext } from '@nestjs-mcp/server';
 
-import { BearerTokenStrategy } from '../strategies/bearer-token.strategy';
+import { BearerTokenStrategy } from '../strategies/bearer-token.strategy.js';
 
 @Injectable()
 export class McpAuthGuard implements CanActivate {

@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
-import { AppConfigModule } from './config/config.module';
-import { CommonModule } from './common/common.module';
-import { AuthModule } from './modules/auth/auth.module';
-import { HealthModule } from './modules/health/health.module';
-import { McpModule } from './modules/mcp/mcp.module';
-import { WellKnownModule } from './modules/well-known/well-known.module';
-import { PrismaModule } from './prisma/prisma.module';
+import { AppConfigModule } from './config/config.module.js';
+import { CommonModule } from './common/common.module.js';
+import { AuthModule } from './modules/auth/auth.module.js';
+import { HealthModule } from './modules/health/health.module.js';
+import { McpModule } from './modules/mcp/mcp.module.js';
+import { WellKnownModule } from './modules/well-known/well-known.module.js';
+import { PrismaModule } from './prisma/prisma.module.js';
 
 @Module({
   imports: [

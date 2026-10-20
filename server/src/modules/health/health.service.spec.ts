@@ -1,4 +1,4 @@
-import { HealthService } from './health.service';
+import { HealthService } from './health.service.js';
 
 describe('HealthService', () => {
   it('reports a connected database', async () => {

@@ -1,6 +1,6 @@
 // import { Injectable } from '@nestjs/common';
-// import { GoogleCalendarClientService } from '../../google/services/google-calendar-client.service';
-// import type { EventInput } from '../types/calendar.types';
+// import { GoogleCalendarClientService } from '../../google/services/google-calendar-client.service.js';
+// import type { EventInput } from '../types/calendar.types.js';
 
 // @Injectable()
 // export class UpdateCalendarEventService {

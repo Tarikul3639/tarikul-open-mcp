@@ -3,9 +3,9 @@ import {
     Injectable,
     UnauthorizedException,
 } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
-import { GoogleAuthService } from './google-auth.service';
-import { OAuthStateService } from './oauth-state.service';
+import { PrismaService } from '../../../prisma/prisma.service.js';
+import { GoogleAuthService } from './google-auth.service.js';
+import { OAuthStateService } from './oauth-state.service.js';
 
 @Injectable()
 export class CalendarService {

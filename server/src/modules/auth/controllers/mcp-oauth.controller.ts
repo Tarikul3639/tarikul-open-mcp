@@ -18,10 +18,10 @@ import {
 } from '@nestjs/swagger';
 import type { Request, Response } from 'express';
 
-import { AuthorizeMcpDto } from '../dto/authorize-mcp.dto';
-import { McpTokenDto } from '../dto/mcp-token.dto';
-import { SessionGuard } from '../guards/session.guard';
-import { McpOauthService } from '../services/mcp-oauth.service';
+import { AuthorizeMcpDto } from '../dto/authorize-mcp.dto.js';
+import { McpTokenDto } from '../dto/mcp-token.dto.js';
+import { SessionGuard } from '../guards/session.guard.js';
+import { McpOauthService } from '../services/mcp-oauth.service.js';
 
 @ApiTags('MCP OAuth')
 @Controller('auth')

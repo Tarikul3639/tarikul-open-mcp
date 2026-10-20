@@ -1,8 +1,9 @@
 {
   "name": "server",
   "version": "0.0.1",
+  "type": "module",
   "description": "",
-  "author": "",
+  "author": "tarikul3639",
   "private": true,
   "license": "MIT",
   "packageManager": "pnpm@12.14.0",

@@ -4,18 +4,18 @@ import {
     UnauthorizedException,
     BadRequestException,
 } from '@nestjs/common';
-import { PrismaService } from '@/prisma/prisma.service';
+import { PrismaService } from '../../prisma/prisma.service.js';
 import { google, calendar_v3 } from 'googleapis';
 import type {
     CalendarEvent,
     ListCalendarEventsResult,
-} from './calendar-event.interface';
+} from './calendar-event.interface.js';
 import type {
     ListCalendarEventsInput,
     FindEventsByDateInput,
     CreateCalendarEventInput,
     UpdateCalendarEventInput,
-} from './calendar.dto';
+} from './calendar.dto.js';
 
 @Injectable()
 export class CalendarService {

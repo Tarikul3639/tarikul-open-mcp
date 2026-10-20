@@ -14,13 +14,13 @@ import {
     ApiOperation,
     ApiTags,
 } from '@nestjs/swagger';
-import { SessionGuard } from '../guards/session.guard';
-import { ClientAccessService } from '../services/client-access.service';
+import { SessionGuard } from '../guards/session.guard.js';
+import { ClientAccessService } from '../services/client-access.service.js';
 import {
     ClientAccessDto,
     ClientAccessResponseDto,
-} from '../dto/client-access.dto';
-import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
+} from '../dto/client-access.dto.js';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface.js';
 
 @ApiTags('Client Access')
 @Controller('auth/clients')

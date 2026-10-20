@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { McpModule as NestMcpModule } from '@nestjs-mcp/server';
 
-import { AuthModule } from '../auth/auth.module';
-import { McpAuthGuard } from './guards/mcp-auth.guard';
-import { BearerTokenStrategy } from './strategies/bearer-token.strategy';
-import { McpService } from './services/mcp.service';
-import { ToolsModule } from '@/tools/tools.module';
+import { AuthModule } from '../auth/auth.module.js';
+import { McpAuthGuard } from './guards/mcp-auth.guard.js';
+import { BearerTokenStrategy } from './strategies/bearer-token.strategy.js';
+import { McpService } from './services/mcp.service.js';
+import { ToolsModule } from '../../tools/tools.module.js';
 
 @Module({
   imports: [

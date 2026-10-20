@@ -16,11 +16,11 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { EnvService } from '@/config/env.service';
-import { AuthUserService } from '../services/auth-user.service';
-import { GoogleAuthService } from '../services/google-auth.service';
-import { OAuthStateService } from '../services/oauth-state.service';
-import { SessionService } from '../services/session.service';
+import { EnvService } from '../../../config/env.service.js';
+import { AuthUserService } from '../services/auth-user.service.js';
+import { GoogleAuthService } from '../services/google-auth.service.js';
+import { OAuthStateService } from '../services/oauth-state.service.js';
+import { SessionService } from '../services/session.service.js';
 
 const SESSION_COOKIE = 'app_session';
 

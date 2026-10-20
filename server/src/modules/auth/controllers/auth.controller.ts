@@ -19,13 +19,13 @@ import {
 } from '@nestjs/swagger';
 import type { Response } from 'express';
 
-import { AuthUserService } from '../services/auth-user.service';
-import { SessionService } from '../services/session.service';
-import { SessionGuard } from '../guards/session.guard';
-import { CurrentUserResponseDto } from '../dto/current-user-response.dto';
-import { LogoutResponseDto } from '../dto/logout-response.dto';
-import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface';
-import { EnvService } from '@/config/env.service';
+import { AuthUserService } from '../services/auth-user.service.js';
+import { SessionService } from '../services/session.service.js';
+import { SessionGuard } from '../guards/session.guard.js';
+import { CurrentUserResponseDto } from '../dto/current-user-response.dto.js';
+import { LogoutResponseDto } from '../dto/logout-response.dto.js';
+import type { AuthenticatedRequest } from '../interfaces/authenticated-request.interface.js';
+import { EnvService } from '../../../config/env.service.js';
 
 const SESSION_COOKIE = 'app_session';
 
