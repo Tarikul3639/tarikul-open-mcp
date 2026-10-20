@@ -1,0 +1,5 @@
+{
+  "framework": null,
+  "buildCommand": "cd server && pnpm install && pnpm prisma generate && pnpm build",
+  "outputDirectory": "server/dist"
+}
