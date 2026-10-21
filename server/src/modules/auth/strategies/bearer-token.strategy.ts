@@ -1,4 +1,5 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 
 import { AccessTokenService } from '../../auth/services/access-token.service.js';
 
@@ -20,7 +21,7 @@ export class BearerTokenStrategy {
         const token = authorization?.match(/^Bearer\s+(\S+)$/i)?.[1];
 
         if (!token) {
-            throw new UnauthorizedException('Bearer token is required');
+            throw new RpcException('Bearer token is required');
         }
 
         try {
@@ -31,7 +32,7 @@ export class BearerTokenStrategy {
                 token,
             };
         } catch {
-            throw new UnauthorizedException('Invalid or expired access token');
+            throw new RpcException('Invalid or expired access token');
         }
     }
 }

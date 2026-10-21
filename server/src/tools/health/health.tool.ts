@@ -1,7 +1,7 @@
-import { Resolver, Tool } from '@nestjs-mcp/server';
+import { Tool, McpController } from '@rekog/mcp-nest';
 import { HealthService } from './health.service.js';
 
-@Resolver()
+@McpController()
 export class HealthTool {
   constructor(private readonly healthService: HealthService) { }
 

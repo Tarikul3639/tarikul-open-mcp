@@ -4,6 +4,7 @@
         "Fdashboard",
         "modelcontextprotocol",
         "PKCE",
+        "rekog",
         "streamable",
         "Timestamptz"
     ]

@@ -1,11 +1,12 @@
-import { BadRequestException, Logger } from '@nestjs/common';
-import { type McpContext, Resolver, Tool, UseGuards } from '@nestjs-mcp/server';
+import { Ctx, Payload, RpcException } from '@nestjs/microservices';
+import { Logger, UseGuards } from '@nestjs/common';
+import { type McpContext, McpController, Tool } from '@rekog/mcp-nest';
 import { z } from 'zod';
-import { McpAuthGuard } from '../../modules/mcp/guards/mcp-auth.guard.js';
+import { McpAuthGuard } from '../../modules/auth/guards/mcp-auth.guard.js';
 import { CalendarService } from './calendar.service.js';
 
 @UseGuards(McpAuthGuard)
-@Resolver()
+@McpController()
 export class CalendarTools {
     constructor(private readonly calendarService: CalendarService) { }
     // Logger instance for debugging and logging purposes
@@ -19,7 +20,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_list_events',
         description: 'List upcoming Google Calendar events',
-        paramsSchema: z.object({
+        parameters: z.object({
             maxResults: z
                 .number()
                 .int()
@@ -31,7 +32,10 @@ export class CalendarTools {
                 ),
         }),
     })
-    async listEvents(input: { maxResults?: number }, ctx: McpContext) {
+    async listEvents(
+        @Payload() input: { maxResults?: number },
+        @Ctx() ctx: McpContext,
+    ) {
         // DEBUG: Log the maxResults parameter for debugging purposes.
         this.logger.log(`Listing events for user with maxResults=${input.maxResults ?? 10}`);
         const userId = this.getUserId(ctx);
@@ -56,7 +60,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_find_event',
         description: 'Find a Google Calendar event by its ID',
-        paramsSchema: z.object({
+        parameters: z.object({
             eventId: z
                 .string()
                 .min(1)
@@ -64,7 +68,10 @@ export class CalendarTools {
                 .describe('The unique ID of the Google Calendar event to find.'),
         }),
     })
-    async findEvent(input: { eventId: string }, ctx: McpContext) {
+    async findEvent(
+        @Payload() input: { eventId: string },
+        @Ctx() ctx: McpContext,
+    ) {
         const userId = this.getUserId(ctx);
 
         return {
@@ -87,7 +94,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_find_events_by_date',
         description: 'Find Google Calendar events within a date-time range',
-        paramsSchema: z.object({
+        parameters: z.object({
             startDate: z
                 .string()
                 .datetime({ offset: true })
@@ -103,8 +110,8 @@ export class CalendarTools {
         }),
     })
     async findEventsByDate(
-        input: { startDate: string; endDate: string },
-        ctx: McpContext,
+        @Payload() input: { startDate: string; endDate: string },
+        @Ctx() ctx: McpContext,
     ) {
         const userId = this.getUserId(ctx);
 
@@ -128,7 +135,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_create_event',
         description: 'Create a Google Calendar event',
-        paramsSchema: z.object({
+        parameters: z.object({
             summary: z
                 .string()
                 .min(1)
@@ -159,14 +166,14 @@ export class CalendarTools {
         }),
     })
     async createEvent(
-        input: {
+        @Payload() input: {
             summary: string;
             description?: string;
             start: string;
             end: string;
             colorId?: string;
         },
-        ctx: McpContext,
+        @Ctx() ctx: McpContext,
     ) {
         const userId = this.getUserId(ctx);
 
@@ -189,7 +196,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_update_event',
         description: 'Update an existing Google Calendar event',
-        paramsSchema: z.object({
+        parameters: z.object({
             eventId: z
                 .string()
                 .min(1)
@@ -230,7 +237,7 @@ export class CalendarTools {
         }),
     })
     async updateEvent(
-        input: {
+        @Payload() input: {
             eventId: string;
             summary?: string;
             description?: string;
@@ -238,7 +245,7 @@ export class CalendarTools {
             end?: string;
             colorId?: string;
         },
-        ctx: McpContext,
+        @Ctx() ctx: McpContext,
     ) {
         const userId = this.getUserId(ctx);
         const { eventId, ...updates } = input;
@@ -266,7 +273,7 @@ export class CalendarTools {
     @Tool({
         name: 'calendar_delete_event',
         description: 'Delete a Google Calendar event by its ID',
-        paramsSchema: z.object({
+        parameters: z.object({
             eventId: z
                 .string()
                 .min(1)
@@ -276,7 +283,10 @@ export class CalendarTools {
                 ),
         }),
     })
-    async deleteEvent(input: { eventId: string }, ctx: McpContext) {
+    async deleteEvent(
+        @Payload() input: { eventId: string },
+        @Ctx() ctx: McpContext,
+    ) {
         const userId = this.getUserId(ctx);
 
         return {
@@ -292,10 +302,20 @@ export class CalendarTools {
     }
 
     private getUserId(ctx: McpContext): string {
-        const userId = ctx.request.auth?.extra?.userId;
+        const request = ctx.getRawRequest() as Request & {
+            auth?: {
+                extra?: {
+                    userId?: string;
+                };
+            };
+        };
+
+        const userId = request.auth?.extra?.userId;
 
         if (typeof userId !== 'string' || userId.length === 0) {
-            throw new Error('Authenticated user ID was not found in MCP context.');
+            throw new RpcException(
+                'Authenticated user ID was not found in MCP context.',
+            );
         }
 
         return userId;

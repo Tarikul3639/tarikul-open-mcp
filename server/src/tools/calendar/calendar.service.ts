@@ -4,6 +4,7 @@ import {
     UnauthorizedException,
     BadRequestException,
 } from '@nestjs/common';
+import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { google, calendar_v3 } from 'googleapis';
 import type {
@@ -35,7 +36,7 @@ export class CalendarService {
 
         // Reject the request if the user has not connected Google Calendar.
         if (!account) {
-            throw new UnauthorizedException('Google Calendar is not connected');
+            throw new RpcException('Google Calendar is not connected');
         }
 
         // Read the OAuth credentials saved for this user's calendar account.
@@ -84,7 +85,7 @@ export class CalendarService {
         );
 
         if (!userId) {
-            throw new UnauthorizedException('User ID is required');
+            throw new RpcException('User ID is required');
         }
 
         const calendar = await this.getCalendar(userId);

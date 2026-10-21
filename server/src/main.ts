@@ -5,12 +5,16 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
-import { AppModule } from './app.module.js';
+import { AppModule, mcp } from './app.module.js';
 import { EnvService } from './config/env.service.js';
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
   const env = app.get(EnvService);
+
+  mcp.setHttpAdapter(app.getHttpAdapter()); // Set the HTTP adapter for the MCP strategy to enable it to handle incoming requests.
+  app.connectMicroservice({ strategy: mcp });
+  await app.startAllMicroservices(); // mounts the MCP transports
 
   app.useGlobalPipes(
     new ValidationPipe({

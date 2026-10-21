@@ -1,18 +1,18 @@
-import { type McpContext, Resolver, Tool } from '@nestjs-mcp/server';
+import { type McpContext, McpController, Tool } from '@rekog/mcp-nest';
 import { z } from 'zod';
 
-@Resolver()
+@McpController()
 export class ExampleTools {
     @Tool({
         name: 'example_tool',
         description: 'Example MCP tool',
-        paramsSchema: z.object({
+        parameters: z.object({
             message: z.string(),
         }),
     })
     exampleTool(params: { message: string }, ctx: McpContext) {
         console.log('Tool arguments:', params);
-        console.log('Request method:', ctx.mcpReq.method);
+        console.log('Request method:', ctx.getRawRequest());
 
         return {
             content: [

@@ -13,15 +13,9 @@ export class WellKnownService {
             authorization_endpoint: `${issuer}/api/auth/authorize`,
             token_endpoint: `${issuer}/api/auth/token`,
             response_types_supported: ['code'],
-            grant_types_supported: [
-                'authorization_code',
-                'refresh_token',
-            ],
+            grant_types_supported: ['authorization_code', 'refresh_token'],
             code_challenge_methods_supported: ['S256'],
-            token_endpoint_auth_methods_supported: [
-                'none',
-                'client_secret_post',
-            ],
+            token_endpoint_auth_methods_supported: ['none', 'client_secret_post'],
         };
     }
 
