@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { RpcException } from '@nestjs/microservices';
 import { PrismaService } from '../../prisma/prisma.service.js';
+import { EnvService } from '../../config/env.service.js';
 import { google, calendar_v3 } from 'googleapis';
 import type {
     CalendarEvent,
@@ -20,7 +21,10 @@ import type {
 
 @Injectable()
 export class CalendarService {
-    constructor(private readonly prisma: PrismaService) { }
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly env: EnvService,
+    ) { }
 
     /**
      * Get a Google Calendar API client for the specified user.
@@ -49,7 +53,10 @@ export class CalendarService {
         };
 
         // Configure Google OAuth with the user's saved credentials.
-        const auth = new google.auth.OAuth2();
+        const auth = new google.auth.OAuth2(
+            this.env.googleClientId,
+            this.env.googleClientSecret,
+        );
         auth.setCredentials(tokens);
 
         // Return a Google Calendar API client.
