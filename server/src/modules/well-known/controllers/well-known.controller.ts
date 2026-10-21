@@ -10,7 +10,9 @@ export class WellKnownController {
         return this.wellKnownService.getAuthorizationServerMetadata();
     }
 
-    @Get('oauth-protected-resource')
+    // RFC 9728 path-suffixed form: /.well-known/oauth-protected-resource/mcp
+    // is what the WWW-Authenticate header on /mcp points to.
+    @Get(['oauth-protected-resource', 'oauth-protected-resource/mcp'])
     getProtectedResourceMetadata() {
         return this.wellKnownService.getProtectedResourceMetadata();
     }

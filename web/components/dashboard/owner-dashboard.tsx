@@ -36,11 +36,17 @@ async function fetchUser(signal?: AbortSignal): Promise<User> {
 async function fetchClientAccess(
   signal?: AbortSignal
 ): Promise<ClientAccess[]> {
-  const response = await axios.get<ClientsResponseDto>("/api/auth/clients", {
-    signal,
-    withCredentials: true,
-    headers: { "Cache-Control": "no-cache" },
-  })
+  const response = await axios.get<ClientsResponseDto | ClientAccess[]>(
+    "/api/auth/clients",
+    {
+      signal,
+      withCredentials: true,
+      headers: { "Cache-Control": "no-cache" },
+    }
+  )
+
+  // The API returns a plain array; the object form is kept for compatibility.
+  if (Array.isArray(response.data)) return response.data
 
   return Array.isArray(response.data?.clients) ? response.data.clients : []
 }
@@ -157,7 +163,7 @@ export default function OwnerDashboard() {
         </div>
       ) : !user ? (
         <div className="px-5 py-6">
-          <div className="flex items-start gap-4">
+          <div className="flex items-start gap-4" >
             <CalendarDays
               size={20}
               strokeWidth={2.2}

@@ -42,10 +42,12 @@ model AuthSession {
 }
 
 model OAuthState {
-  state     String   @id
-  userId    String?   @map("user_id")
-  expiresAt DateTime @map("expires_at") @db.Timestamptz(6)
-  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  state      String   @id
+  userId     String?  @map("user_id")
+  // Relative web path to open after Google login (e.g. the MCP consent page).
+  redirectTo String?  @map("redirect_to")
+  expiresAt  DateTime @map("expires_at") @db.Timestamptz(6)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([expiresAt])
   @@map("oauth_states")

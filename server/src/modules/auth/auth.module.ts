@@ -14,6 +14,8 @@ import { CalendarService } from './services/calendar.service.js';
 import { SessionService } from './services/session.service.js';
 import { McpOauthService } from './services/mcp-oauth.service.js';
 import { AccessTokenService } from './services/access-token.service.js';
+import { ClientRegistrationService } from './services/client-registration.service.js';
+import { BearerTokenStrategy } from './strategies/bearer-token.strategy.js';
 
 import { SessionGuard } from './guards/session.guard.js';
 
@@ -34,6 +36,8 @@ import { SessionGuard } from './guards/session.guard.js';
     SessionService,
     McpOauthService,
     AccessTokenService,
+    ClientRegistrationService,
+    BearerTokenStrategy,
     SessionGuard,
   ],
   exports: [
@@ -45,6 +49,8 @@ import { SessionGuard } from './guards/session.guard.js';
     SessionService,
     McpOauthService,
     AccessTokenService,
+    ClientRegistrationService,
+    BearerTokenStrategy,
     SessionGuard,
   ],
 })

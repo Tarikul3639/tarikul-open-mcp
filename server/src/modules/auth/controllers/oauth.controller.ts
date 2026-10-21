@@ -21,6 +21,7 @@ import { AuthUserService } from '../services/auth-user.service.js';
 import { GoogleAuthService } from '../services/google-auth.service.js';
 import { OAuthStateService } from '../services/oauth-state.service.js';
 import { SessionService } from '../services/session.service.js';
+import { sanitizeNextPath } from '../utils/redirect.util.js';
 
 const SESSION_COOKIE = 'app_session';
 
@@ -53,8 +54,23 @@ export class OAuthController {
     @ApiFoundResponse({
         description: 'Redirects the user to Google OAuth.',
     })
-    async googleLogin(@Res() res: Response): Promise<void> {
-        const state = await this.oauthStateService.create();
+    @ApiQuery({
+        name: 'next',
+        required: false,
+        type: String,
+        description:
+            'Relative web path to open after login, e.g. /oauth/consent?... Defaults to /dashboard.',
+    })
+    async googleLogin(
+        @Query('next') next: string | undefined,
+        @Res() res: Response,
+    ): Promise<void> {
+        // Remember where the user should land after login (for example the
+        // MCP consent page), so the MCP authorization flow can continue.
+        const state = await this.oauthStateService.create(
+            undefined,
+            sanitizeNextPath(next),
+        );
 
         const authorizationUrl =
             this.googleAuthService.createAuthorizationUrl(state);
@@ -113,7 +129,8 @@ export class OAuthController {
             );
         }
 
-        await this.oauthStateService.consume(state);
+        const { redirectTo } =
+            await this.oauthStateService.consumeLoginState(state);
 
         try {
             const tokens =
@@ -156,7 +173,10 @@ export class OAuthController {
                 expires: session.expiresAt,
             });
 
-            res.redirect(302, `${this.env.webOrigin}/dashboard`);
+            res.redirect(
+                302,
+                `${this.env.webOrigin}${sanitizeNextPath(redirectTo)}`,
+            );
         } catch (err) {
             if (
                 err instanceof UnauthorizedException ||

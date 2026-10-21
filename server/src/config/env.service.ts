@@ -22,8 +22,13 @@ export class EnvService {
         return this.config.get('WEB_ORIGIN', { infer: true });
     }
 
-    get corsOrigins() {
-        return this.config.get('CORS_ORIGINS', { infer: true });
+    /** Comma-separated CORS_ORIGINS parsed into a list. */
+    get corsOrigins(): string[] {
+        return this.config
+            .get('CORS_ORIGINS', { infer: true })
+            .split(',')
+            .map((origin) => origin.trim())
+            .filter((origin) => origin.length > 0);
     }
 
     get googleClientId() {
