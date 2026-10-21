@@ -1,5 +1,11 @@
 import type { Metadata } from "next"
 import { Geist, Geist_Mono } from "next/font/google"
+import {
+  DEFAULT_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_IMAGE,
+} from "@/lib/seo"
 import "./globals.css"
 
 const geistSans = Geist({
@@ -13,61 +19,57 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://tarikuls-mcp.vercel.app"),
+  metadataBase: new URL(SITE_URL),
 
   title: {
-    default: "Tarikul's MCP",
-    template: "%s | Tarikul's MCP",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
 
-  description:
-    "Tarikul's personal Model Context Protocol (MCP) server for connecting AI assistants with Google Calendar and future productivity tools like Gmail.",
+  description: DEFAULT_DESCRIPTION,
 
-  applicationName: "Tarikul's MCP",
+  applicationName: SITE_NAME,
 
   icons: {
-    icon: "/tarikul-open-mcp-logo-yellow-black.png",
-    apple: "/tarikul-open-mcp-logo-yellow-black.png",
+    icon: SOCIAL_IMAGE,
+    apple: SOCIAL_IMAGE,
   },
 
   keywords: [
-    "Tarikul's MCP",
-    "MCP Server",
+    "Tarikul Open MCP",
+    "Google Calendar MCP server",
     "Model Context Protocol",
-    "Google Calendar MCP",
-    "Gmail MCP",
-    "AI Tools",
-    "AI Productivity",
-    "Personal MCP Server",
+    "ChatGPT Google Calendar integration",
+    "remote MCP server",
+    "AI calendar tools",
   ],
 
-  authors: [{ name: "Tarikul" }],
-  creator: "Tarikul",
+  authors: [{ name: "Tarikul Islam", url: "https://tarikul-islam.me/" }],
+  creator: "Tarikul Islam",
+  publisher: SITE_NAME,
 
   openGraph: {
-    title: "Tarikul's MCP",
-    description:
-      "Connect AI assistants with Google Calendar and productivity tools through Tarikul's MCP server.",
-    url: "https://tarikuls-mcp.vercel.app",
-    siteName: "Tarikul's MCP",
+    title: "Tarikul Open MCP | Google Calendar for AI Assistants",
+    description: DEFAULT_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     locale: "en_US",
     type: "website",
     images: [
       {
-        url: "/tarikul-open-mcp-logo-yellow-black.png",
+        url: SOCIAL_IMAGE,
         width: 1254,
         height: 1254,
-        alt: "Tarikul's MCP - Personal MCP Server",
+        alt: "Tarikul Open MCP logo",
       },
     ],
   },
 
   twitter: {
-    card: "summary",
-    title: "Tarikul's MCP",
-    description:
-      "A personal MCP server for Google Calendar and AI-powered productivity integrations.",
-    images: ["/tarikul-open-mcp-logo-yellow-black.png"],
+    card: "summary_large_image",
+    title: "Tarikul Open MCP | Google Calendar for AI Assistants",
+    description: DEFAULT_DESCRIPTION,
+    images: [SOCIAL_IMAGE],
   },
 
   robots: {

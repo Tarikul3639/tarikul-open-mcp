@@ -1,3 +1,4 @@
+import type { Metadata } from "next"
 import { Bricolage_Grotesque } from "next/font/google"
 import Diagram from "@/components/home/diagram"
 import AuthNotice from "@/components/home/auth-notice"
@@ -5,6 +6,40 @@ import FeaturesList from "@/components/home/features-list"
 import IntroSection from "@/components/home/intro-section"
 import SiteFooter from "@/components/home/site-footer"
 import SiteHeader from "@/components/home/site-header"
+import {
+  DEFAULT_DESCRIPTION,
+  SITE_NAME,
+  SITE_URL,
+  SOCIAL_IMAGE,
+} from "@/lib/seo"
+
+export const metadata: Metadata = {
+  title: "Google Calendar MCP Server for AI Assistants",
+  description: DEFAULT_DESCRIPTION,
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: `${SITE_NAME} | Google Calendar MCP Server for AI Assistants`,
+    description: DEFAULT_DESCRIPTION,
+    url: "/",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    type: "website",
+    images: [
+      {
+        url: SOCIAL_IMAGE,
+        width: 1254,
+        height: 1254,
+        alt: "Tarikul Open MCP logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${SITE_NAME} | Google Calendar MCP Server for AI Assistants`,
+    description: DEFAULT_DESCRIPTION,
+    images: [SOCIAL_IMAGE],
+  },
+}
 
 const font = Bricolage_Grotesque({ subsets: ["latin"], display: "swap" })
 
@@ -24,6 +59,23 @@ export default function Home() {
       className={`${font.className} relative min-h-screen overflow-hidden bg-black text-[#EDEDED] selection:bg-[#F5C518] selection:text-black`}
       style={{ colorScheme: "dark" }}
     >
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "WebSite",
+            name: SITE_NAME,
+            url: SITE_URL,
+            description: DEFAULT_DESCRIPTION,
+            author: {
+              "@type": "Person",
+              name: "Tarikul Islam",
+              url: "https://tarikul-islam.me/",
+            },
+          }),
+        }}
+      />
       <div
         aria-hidden
         className="pointer-events-none absolute inset-x-0 top-0 h-140"

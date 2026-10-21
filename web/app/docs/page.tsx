@@ -9,19 +9,46 @@ import {
   UserRound,
 } from "lucide-react"
 import Link from "next/link"
+import type { Metadata } from "next"
 import SiteFooter from "@/components/home/site-footer"
 import SiteHeader from "@/components/home/site-header"
 import EndpointConnect from "@/components/home/endpoint-connect"
+import { SITE_NAME, SOCIAL_IMAGE } from "@/lib/seo"
 
 const font = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
 })
 
-export const metadata = {
-  title: "Documentation | Tarikul's MCP",
+export const metadata: Metadata = {
+  title: "Google Calendar MCP Setup Guide",
   description:
-    "Connect a Google Calendar account to Tarikul's remote MCP server, authorize clients, and see the available calendar tools.",
+    "Learn how to connect Google Calendar, add this remote MCP server to ChatGPT or another MCP client, approve access, and use the available calendar tools.",
+  alternates: { canonical: "/docs" },
+  openGraph: {
+    title: `Google Calendar MCP Setup Guide | ${SITE_NAME}`,
+    description:
+      "Step-by-step setup for connecting Google Calendar to ChatGPT and other MCP clients.",
+    url: "/docs",
+    siteName: SITE_NAME,
+    locale: "en_US",
+    type: "article",
+    images: [
+      {
+        url: SOCIAL_IMAGE,
+        width: 1254,
+        height: 1254,
+        alt: "Tarikul Open MCP logo",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Google Calendar MCP Setup Guide | ${SITE_NAME}`,
+    description:
+      "Step-by-step setup for connecting Google Calendar to ChatGPT and other MCP clients.",
+    images: [SOCIAL_IMAGE],
+  },
 }
 
 const GRID_STYLE = {

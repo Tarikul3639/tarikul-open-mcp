@@ -1,7 +1,18 @@
+import type { Metadata } from "next"
 import { Bricolage_Grotesque } from "next/font/google"
 import OwnerDashboard from "@/components/dashboard/owner-dashboard"
 import SiteFooter from "@/components/home/site-footer"
 import SiteHeader from "@/components/home/site-header"
+
+export const metadata: Metadata = {
+  title: "Account Dashboard",
+  description: "Manage your Google Calendar connection and MCP client access.",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
+}
 
 const font = Bricolage_Grotesque({ subsets: ["latin"], display: "swap" })
 

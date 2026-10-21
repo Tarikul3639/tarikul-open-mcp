@@ -8,7 +8,12 @@ const font = Bricolage_Grotesque({ subsets: ["latin"], display: "swap" })
 
 export const metadata: Metadata = {
   title: "Authorize MCP client",
-  robots: { index: false, follow: false },
+  description: "Review and approve an MCP client's access to your account.",
+  robots: {
+    index: false,
+    follow: false,
+    googleBot: { index: false, follow: false, noimageindex: true },
+  },
 }
 
 const GRID_STYLE = {
