@@ -11,4 +11,4 @@ import { CalendarTools } from './calendar.tools.js';
   providers: [CalendarService, McpAuthGuard, BearerTokenStrategy],
   exports: [CalendarService],
 })
-export class CalendarModule { }
+export class CalendarModule {}

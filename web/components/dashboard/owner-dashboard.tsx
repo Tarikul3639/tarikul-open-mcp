@@ -163,7 +163,7 @@ export default function OwnerDashboard() {
         </div>
       ) : !user ? (
         <div className="px-5 py-6">
-          <div className="flex items-start gap-4" >
+          <div className="flex items-start gap-4">
             <CalendarDays
               size={20}
               strokeWidth={2.2}

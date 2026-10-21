@@ -25,20 +25,16 @@ export function OwnerDashboardAccount({
     setError("")
 
     try {
-      await axios.post(
-        "/api/auth/logout",
-        {},
-        { withCredentials: true },
-      )
+      await axios.post("/api/auth/logout", {}, { withCredentials: true })
 
       onSignedOut()
     } catch (reason) {
       setError(
         axios.isAxiosError(reason)
-          ? reason.response?.data?.message ??
-          reason.response?.data?.error ??
-          "Could not sign out. Please try again."
-          : "Could not sign out. Please try again.",
+          ? (reason.response?.data?.message ??
+              reason.response?.data?.error ??
+              "Could not sign out. Please try again.")
+          : "Could not sign out. Please try again."
       )
     } finally {
       setSigningOut(false)
@@ -67,9 +63,7 @@ export function OwnerDashboardAccount({
 
           <div className="min-w-0">
             <p className="truncate font-semibold">{user.name}</p>
-            <p className="truncate text-sm text-[#8A8A8A]">
-              {user.email}
-            </p>
+            <p className="truncate text-sm text-[#8A8A8A]">{user.email}</p>
           </div>
         </div>
 

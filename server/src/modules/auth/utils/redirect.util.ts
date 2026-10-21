@@ -10,15 +10,15 @@ const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
 
 // Schemes that must never be used as an OAuth redirect target.
 const FORBIDDEN_SCHEMES = new Set([
-    'javascript:',
-    'data:',
-    'file:',
-    'vbscript:',
-    'blob:',
-    'about:',
-    'ftp:',
-    'ws:',
-    'wss:',
+  'javascript:',
+  'data:',
+  'file:',
+  'vbscript:',
+  'blob:',
+  'about:',
+  'ftp:',
+  'ws:',
+  'wss:',
 ]);
 
 /**
@@ -27,33 +27,33 @@ const FORBIDDEN_SCHEMES = new Set([
  * protocol-relative `//host`, backslash tricks) falls back to the dashboard.
  */
 export function sanitizeNextPath(next?: unknown): string {
-    if (typeof next !== 'string' || next.length === 0) {
-        return DEFAULT_NEXT_PATH;
-    }
+  if (typeof next !== 'string' || next.length === 0) {
+    return DEFAULT_NEXT_PATH;
+  }
 
-    if (
-        next.length > MAX_NEXT_PATH_LENGTH ||
-        !next.startsWith('/') ||
-        next.startsWith('//') ||
-        next.startsWith('/\\') ||
-        hasControlOrBackslash(next)
-    ) {
-        return DEFAULT_NEXT_PATH;
-    }
+  if (
+    next.length > MAX_NEXT_PATH_LENGTH ||
+    !next.startsWith('/') ||
+    next.startsWith('//') ||
+    next.startsWith('/\\') ||
+    hasControlOrBackslash(next)
+  ) {
+    return DEFAULT_NEXT_PATH;
+  }
 
-    return next;
+  return next;
 }
 
 function hasControlOrBackslash(value: string): boolean {
-    for (let i = 0; i < value.length; i++) {
-        const code = value.charCodeAt(i);
+  for (let i = 0; i < value.length; i++) {
+    const code = value.charCodeAt(i);
 
-        if (code < 0x20 || code === 0x7f || code === 0x5c) {
-            return true;
-        }
+    if (code < 0x20 || code === 0x7f || code === 0x5c) {
+      return true;
     }
+  }
 
-    return false;
+  return false;
 }
 
 /**
@@ -67,36 +67,36 @@ function hasControlOrBackslash(value: string): boolean {
  * Fragments are never allowed (RFC 6749 §3.1.2).
  */
 export function isAllowedRedirectUri(value: unknown): value is string {
-    if (typeof value !== 'string' || value.length === 0 || value.length > 2048) {
-        return false;
-    }
+  if (typeof value !== 'string' || value.length === 0 || value.length > 2048) {
+    return false;
+  }
 
-    let url: URL;
+  let url: URL;
 
-    try {
-        url = new URL(value);
-    } catch {
-        return false;
-    }
+  try {
+    url = new URL(value);
+  } catch {
+    return false;
+  }
 
-    if (url.hash || value.includes('#')) {
-        return false;
-    }
+  if (url.hash || value.includes('#')) {
+    return false;
+  }
 
-    const protocol = url.protocol.toLowerCase();
+  const protocol = url.protocol.toLowerCase();
 
-    if (protocol === 'https:') {
-        return Boolean(url.hostname);
-    }
+  if (protocol === 'https:') {
+    return Boolean(url.hostname);
+  }
 
-    if (protocol === 'http:') {
-        return LOOPBACK_HOSTS.has(url.hostname.toLowerCase());
-    }
+  if (protocol === 'http:') {
+    return LOOPBACK_HOSTS.has(url.hostname.toLowerCase());
+  }
 
-    if (FORBIDDEN_SCHEMES.has(protocol)) {
-        return false;
-    }
+  if (FORBIDDEN_SCHEMES.has(protocol)) {
+    return false;
+  }
 
-    // Private-use URI scheme (e.g. cursor://, vscode://, com.example.app:/cb)
-    return /^[a-z][a-z0-9+.-]*:$/.test(protocol);
+  // Private-use URI scheme (e.g. cursor://, vscode://, com.example.app:/cb)
+  return /^[a-z][a-z0-9+.-]*:$/.test(protocol);
 }

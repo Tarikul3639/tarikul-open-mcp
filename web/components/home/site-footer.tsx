@@ -1,21 +1,33 @@
-import { ArrowUpRight } from "lucide-react";
-import Link from "next/link";
+import { ArrowUpRight } from "lucide-react"
+import Link from "next/link"
 
 const FOOTER_LINKS = [
   { label: "Home", href: "/" },
   { label: "Dashboard", href: "/dashboard" },
   { label: "How it works", href: "/docs" },
-];
+]
 
 export default function SiteFooter() {
   return (
-    <footer className="rise mt-10 border-t-2 border-[#2B2B2B] pt-5" style={{ animationDelay: "520ms" }}>
+    <footer
+      className="rise mt-10 border-t-2 border-[#2B2B2B] pt-5"
+      style={{ animationDelay: "520ms" }}
+    >
       <div className="grid gap-6 sm:grid-cols-[1fr_auto] sm:items-start">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#F5C518]">Links</p>
-          <nav aria-label="Footer navigation" className="mt-3 flex flex-wrap gap-x-5 gap-y-2">
+          <p className="text-xs font-bold tracking-[0.16em] text-[#F5C518] uppercase">
+            Links
+          </p>
+          <nav
+            aria-label="Footer navigation"
+            className="mt-3 flex flex-wrap gap-x-5 gap-y-2"
+          >
             {FOOTER_LINKS.map(({ label, href }) => (
-              <Link key={href} href={href} className="text-sm text-[#A5A5A5] transition-colors hover:text-[#F5C518]">
+              <Link
+                key={href}
+                href={href}
+                className="text-sm text-[#A5A5A5] transition-colors hover:text-[#F5C518]"
+              >
                 {label}
               </Link>
             ))}
@@ -23,7 +35,9 @@ export default function SiteFooter() {
         </div>
 
         <div className="sm:text-right">
-          <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#F5C518]">Created by</p>
+          <p className="text-xs font-bold tracking-[0.16em] text-[#F5C518] uppercase">
+            Created by
+          </p>
           <a
             href="https://tarikul-islam.me/"
             target="_blank"
@@ -39,5 +53,5 @@ export default function SiteFooter() {
         Built with Next.js and the Model Context Protocol.
       </p>
     </footer>
-  );
+  )
 }

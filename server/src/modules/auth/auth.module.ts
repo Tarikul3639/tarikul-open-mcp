@@ -54,4 +54,4 @@ import { SessionGuard } from './guards/session.guard.js';
     SessionGuard,
   ],
 })
-export class AuthModule { }
+export class AuthModule {}

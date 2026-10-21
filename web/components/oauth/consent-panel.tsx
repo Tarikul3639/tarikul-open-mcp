@@ -37,7 +37,12 @@ type ViewState =
   | { kind: "loading" }
   | { kind: "invalid"; message: string }
   | { kind: "login"; client: ClientInfo }
-  | { kind: "ready"; client: ClientInfo; user: User; calendarConnected: boolean | null }
+  | {
+      kind: "ready"
+      client: ClientInfo
+      user: User
+      calendarConnected: boolean | null
+    }
   | { kind: "redirecting"; approved: boolean }
 
 const PERMISSIONS = [
@@ -73,8 +78,7 @@ function describeRedirect(uri: string): string {
 function errorMessage(reason: unknown, fallback: string): string {
   if (axios.isAxiosError(reason)) {
     const data = reason.response?.data as
-      | { message?: string | string[]; error_description?: string }
-      | undefined
+      { message?: string | string[]; error_description?: string } | undefined
     const message = Array.isArray(data?.message)
       ? data?.message.join(", ")
       : data?.message
@@ -200,7 +204,12 @@ export function ConsentPanel() {
       setView({ kind: "redirecting", approved: decision === "allow" })
       window.location.assign(response.data.redirectUrl)
     } catch (reason) {
-      setError(errorMessage(reason, "Could not complete authorization. Please try again."))
+      setError(
+        errorMessage(
+          reason,
+          "Could not complete authorization. Please try again."
+        )
+      )
       setSubmitting(null)
     }
   }
@@ -266,17 +275,14 @@ export function ConsentPanel() {
                   key={permission}
                   className="flex items-start gap-2 text-sm text-[#CFCFCF]"
                 >
-                  <Check
-                    size={16}
-                    className="mt-0.5 shrink-0 text-[#F5C518]"
-                  />
+                  <Check size={16} className="mt-0.5 shrink-0 text-[#F5C518]" />
                   {permission}
                 </li>
               ))}
             </ul>
             <p className="mt-4 text-xs leading-relaxed text-[#8A8A8A]">
               After approval you will be sent back to{" "}
-              <span className="whitespace-nowrap font-mono text-[#CFCFCF]">
+              <span className="font-mono whitespace-nowrap text-[#CFCFCF]">
                 {describeRedirect(view.client.redirect_uri)}
               </span>
               . You can revoke access at any time from your{" "}
@@ -290,7 +296,10 @@ export function ConsentPanel() {
               <p className="mt-4 rounded-md border border-[#F5C518]/30 bg-[#F5C518]/10 px-3 py-2 text-xs leading-relaxed text-[#F5C518]">
                 Your Google Calendar is not connected yet. You can approve now,
                 but calendar tools will fail until you connect it from the{" "}
-                <Link href="/dashboard" className="underline underline-offset-2">
+                <Link
+                  href="/dashboard"
+                  className="underline underline-offset-2"
+                >
                   dashboard
                 </Link>
                 .

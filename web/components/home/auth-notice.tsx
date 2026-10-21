@@ -1,32 +1,32 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"
 
 export default function AuthNotice() {
-  const [message, setMessage] = useState("");
-  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const [message, setMessage] = useState("")
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const auth = params.get("auth");
+    const params = new URLSearchParams(window.location.search)
+    const auth = params.get("auth")
 
     if (auth === "success") {
-      setMessage("Google Calendar connected successfully!");
+      setMessage("Google Calendar connected successfully!")
     } else if (auth === "error") {
-      setMessage("Google authentication failed. Please try again.");
+      setMessage("Google authentication failed. Please try again.")
     } else {
-      return;
+      return
     }
 
-    window.history.replaceState({}, "", "/");
-    timer.current = setTimeout(() => setMessage(""), 30000);
+    window.history.replaceState({}, "", "/")
+    timer.current = setTimeout(() => setMessage(""), 30000)
 
     return () => {
-      if (timer.current) clearTimeout(timer.current);
-    };
-  }, []);
+      if (timer.current) clearTimeout(timer.current)
+    }
+  }, [])
 
-  if (!message) return null;
+  if (!message) return null
 
   return (
     <div
@@ -39,5 +39,5 @@ export default function AuthNotice() {
     >
       {message}
     </div>
-  );
+  )
 }

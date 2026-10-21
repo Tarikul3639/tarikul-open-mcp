@@ -35,7 +35,7 @@ export default function ConsentPage() {
       <div className="relative mx-auto max-w-6xl px-5 py-8 sm:py-14">
         <SiteHeader />
         <div className="rise mt-12">
-          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#F5C518]">
+          <p className="text-xs font-semibold tracking-[0.2em] text-[#F5C518] uppercase">
             Authorization
           </p>
           <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">

@@ -3,7 +3,7 @@ import { HealthService } from './health.service.js';
 
 @McpController()
 export class HealthTool {
-  constructor(private readonly healthService: HealthService) { }
+  constructor(private readonly healthService: HealthService) {}
 
   @Tool({
     name: 'health_check',

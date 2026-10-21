@@ -1,4 +1,4 @@
-import { CalendarDays, Radio, ShieldCheck } from "lucide-react";
+import { CalendarDays, Radio, ShieldCheck } from "lucide-react"
 
 const FEATURES = [
   {
@@ -16,7 +16,7 @@ const FEATURES = [
     title: "Personal account access",
     text: "Secure remote OAuth with PKCE and short-lived access tokens.",
   },
-];
+]
 
 export default function FeaturesList() {
   return (
@@ -38,5 +38,5 @@ export default function FeaturesList() {
         </li>
       ))}
     </ul>
-  );
+  )
 }

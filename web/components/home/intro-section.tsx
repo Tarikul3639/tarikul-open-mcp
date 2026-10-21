@@ -1,12 +1,12 @@
-import EndpointConnect from "@/components/home/endpoint-connect";
-import ServerStatus from "@/components/home/server-status";
+import EndpointConnect from "@/components/home/endpoint-connect"
+import ServerStatus from "@/components/home/server-status"
 
 export default function IntroSection() {
   return (
     <section className="pt-12 sm:pt-16">
       <ServerStatus />
       <h1
-        className="rise text-4xl font-extrabold leading-[1.05] tracking-tight sm:text-5xl"
+        className="rise text-4xl leading-[1.05] font-extrabold tracking-tight sm:text-5xl"
         style={{ animationDelay: "80ms" }}
       >
         Your calendar, connected on your terms.
@@ -20,5 +20,5 @@ export default function IntroSection() {
       </p>
       <EndpointConnect />
     </section>
-  );
+  )
 }

@@ -3,7 +3,7 @@ import { HealthService } from './health.service.js';
 import { HealthTool } from './health.tool.js';
 
 @Module({
-    controllers: [HealthTool],
-    providers: [HealthService],
+  controllers: [HealthTool],
+  providers: [HealthService],
 })
-export class HealthModule { }
+export class HealthModule {}

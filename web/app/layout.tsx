@@ -1,16 +1,16 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import type { Metadata } from "next"
+import { Geist, Geist_Mono } from "next/font/google"
+import "./globals.css"
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-});
+})
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-});
+})
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://tarikuls-mcp.vercel.app"),
@@ -24,6 +24,11 @@ export const metadata: Metadata = {
     "Tarikul's personal Model Context Protocol (MCP) server for connecting AI assistants with Google Calendar and future productivity tools like Gmail.",
 
   applicationName: "Tarikul's MCP",
+
+  icons: {
+    icon: "/tarikul-open-mcp-logo-yellow-black.png",
+    apple: "/tarikul-open-mcp-logo-yellow-black.png",
+  },
 
   keywords: [
     "Tarikul's MCP",
@@ -49,20 +54,20 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: "/tarikuls-mcp.png",
-        width: 1200,
-        height: 630,
+        url: "/tarikul-open-mcp-logo-yellow-black.png",
+        width: 1254,
+        height: 1254,
         alt: "Tarikul's MCP - Personal MCP Server",
       },
     ],
   },
 
   twitter: {
-    card: "summary_large_image",
+    card: "summary",
     title: "Tarikul's MCP",
     description:
       "A personal MCP server for Google Calendar and AI-powered productivity integrations.",
-    images: ["/tarikuls-mcp.png"],
+    images: ["/tarikul-open-mcp-logo-yellow-black.png"],
   },
 
   robots: {
@@ -74,7 +79,7 @@ export const metadata: Metadata = {
       "max-image-preview": "large",
     },
   },
-};
+}
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
@@ -82,7 +87,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="flex min-h-full flex-col">{children}</body>
     </html>
-  );
+  )
 }

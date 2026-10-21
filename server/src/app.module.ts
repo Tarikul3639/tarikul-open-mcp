@@ -36,4 +36,4 @@ export const mcp = new McpStrategy({
     { provide: MCP_STRATEGY, useValue: mcp },
   ],
 })
-export class AppModule { }
+export class AppModule {}

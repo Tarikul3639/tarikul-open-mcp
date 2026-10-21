@@ -1,12 +1,12 @@
-import { Bricolage_Grotesque } from "next/font/google";
-import Diagram from "@/components/home/diagram";
-import AuthNotice from "@/components/home/auth-notice";
-import FeaturesList from "@/components/home/features-list";
-import IntroSection from "@/components/home/intro-section";
-import SiteFooter from "@/components/home/site-footer";
-import SiteHeader from "@/components/home/site-header";
+import { Bricolage_Grotesque } from "next/font/google"
+import Diagram from "@/components/home/diagram"
+import AuthNotice from "@/components/home/auth-notice"
+import FeaturesList from "@/components/home/features-list"
+import IntroSection from "@/components/home/intro-section"
+import SiteFooter from "@/components/home/site-footer"
+import SiteHeader from "@/components/home/site-header"
 
-const font = Bricolage_Grotesque({ subsets: ["latin"], display: "swap" });
+const font = Bricolage_Grotesque({ subsets: ["latin"], display: "swap" })
 
 const GRID_STYLE = {
   backgroundImage:
@@ -16,7 +16,7 @@ const GRID_STYLE = {
     "radial-gradient(ellipse 70% 55% at 50% 0%, #000 25%, transparent 75%)",
   maskImage:
     "radial-gradient(ellipse 70% 55% at 50% 0%, #000 25%, transparent 75%)",
-};
+}
 
 export default function Home() {
   return (
@@ -43,5 +43,5 @@ export default function Home() {
         <SiteFooter />
       </div>
     </main>
-  );
+  )
 }

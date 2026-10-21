@@ -1,6 +1,6 @@
 "use client"
 
-import { LoaderCircle, Plug, UserRound } from "lucide-react"
+import { LoaderCircle, UserRound } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Space_Grotesk } from "next/font/google"
@@ -39,20 +39,14 @@ export default function SiteHeader() {
 
     async function loadUser() {
       try {
-        const response = await axios.get<UserResponseDto>(
-          "/api/auth/me",
-          {
-            withCredentials: true,
-            signal: controller.signal,
-          },
-        )
+        const response = await axios.get<UserResponseDto>("/api/auth/me", {
+          withCredentials: true,
+          signal: controller.signal,
+        })
 
         setUser(response.data)
       } catch (error) {
-        if (
-          !controller.signal.aborted &&
-          !axios.isCancel(error)
-        ) {
+        if (!controller.signal.aborted && !axios.isCancel(error)) {
           setUser(null)
         }
       } finally {
@@ -80,9 +74,16 @@ export default function SiteHeader() {
         <Link
           href="/"
           aria-label="Tarikul's MCP home"
-          className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#F5C518] text-black"
+          className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-md bg-white"
         >
-          <Plug size={23} strokeWidth={2.4} />
+          <Image
+            src="/tarikul-open-mcp-logo-yellow-black.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-full w-full object-contain"
+            priority
+          />
         </Link>
 
         <Link

@@ -14,51 +14,51 @@ import type { BearerTokenStrategy } from '../strategies/bearer-token.strategy.js
  * The NestJS McpAuthGuard still runs on every tool call as a second check.
  */
 export function createMcpBearerAuthMiddleware(options: {
-    strategy: BearerTokenStrategy;
-    resourceMetadataUrl: string;
+  strategy: BearerTokenStrategy;
+  resourceMetadataUrl: string;
 }) {
-    const { strategy, resourceMetadataUrl } = options;
+  const { strategy, resourceMetadataUrl } = options;
 
-    return async (req: Request, res: Response, next: NextFunction) => {
-        // Let CORS preflight requests through.
-        if (req.method === 'OPTIONS') {
-            return next();
-        }
+  return async (req: Request, res: Response, next: NextFunction) => {
+    // Let CORS preflight requests through.
+    if (req.method === 'OPTIONS') {
+      return next();
+    }
 
-        try {
-            const result = await strategy.verify(req.headers.authorization);
+    try {
+      const result = await strategy.verify(req.headers.authorization);
 
-            if (!result.ok) {
-                const challenge =
-                    result.reason === 'missing_token'
-                        ? `Bearer resource_metadata="${resourceMetadataUrl}"`
-                        : `Bearer error="invalid_token", error_description="The access token is invalid, expired, or revoked", resource_metadata="${resourceMetadataUrl}"`;
+      if (!result.ok) {
+        const challenge =
+          result.reason === 'missing_token'
+            ? `Bearer resource_metadata="${resourceMetadataUrl}"`
+            : `Bearer error="invalid_token", error_description="The access token is invalid, expired, or revoked", resource_metadata="${resourceMetadataUrl}"`;
 
-                res.setHeader('WWW-Authenticate', challenge);
-                res.status(401).json({
-                    error:
-                        result.reason === 'missing_token'
-                            ? 'unauthorized'
-                            : 'invalid_token',
-                    error_description:
-                        result.reason === 'missing_token'
-                            ? 'Authorization required. Sign in to connect this MCP client.'
-                            : 'The access token is invalid, expired, or revoked.',
-                });
-                return;
-            }
+        res.setHeader('WWW-Authenticate', challenge);
+        res.status(401).json({
+          error:
+            result.reason === 'missing_token'
+              ? 'unauthorized'
+              : 'invalid_token',
+          error_description:
+            result.reason === 'missing_token'
+              ? 'Authorization required. Sign in to connect this MCP client.'
+              : 'The access token is invalid, expired, or revoked.',
+        });
+        return;
+      }
 
-            // Same shape the MCP SDK and McpAuthGuard use.
-            (req as Request & { auth?: unknown }).auth = {
-                token: result.identity.token,
-                clientId: result.identity.clientId,
-                scopes: [],
-                extra: { userId: result.identity.userId },
-            };
+      // Same shape the MCP SDK and McpAuthGuard use.
+      (req as Request & { auth?: unknown }).auth = {
+        token: result.identity.token,
+        clientId: result.identity.clientId,
+        scopes: [],
+        extra: { userId: result.identity.userId },
+      };
 
-            return next();
-        } catch (error) {
-            return next(error);
-        }
-    };
+      return next();
+    } catch (error) {
+      return next(error);
+    }
+  };
 }
