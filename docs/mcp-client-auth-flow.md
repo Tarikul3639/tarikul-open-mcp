@@ -61,7 +61,7 @@ sequenceDiagram
             Page->>Panel: Check client, session, and Calendar status again
         end
         Panel->>OAuth: POST /api/auth/authorize/consent with decision and session cookie
-        OAuth->>OAuthService: Validate request; save grant if Allow
+        OAuth->>OAuthService: Validate the decision and save a grant if allowed
         OAuthService-->>Panel: redirectUrl with code, or access_denied
         Panel-->>Browser: Navigate to redirectUrl
     end
