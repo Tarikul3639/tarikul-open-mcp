@@ -16,7 +16,7 @@ Use `pnpm run prisma:migrate:dev --` when authoring a schema change. The checked
 - `/api/auth/*`: Google login, profile/session, disconnect, and personal AI-client grants.
 - `/api/oauth/*`: authorization, DCR registration, PKCE code and refresh-token exchange.
 - `/.well-known/oauth-*`: authorization-server and protected-resource metadata.
-- `/api/mcp`: authenticated Streamable HTTP MCP endpoint with calendar tools.
+- `/mcp`: authenticated Streamable HTTP MCP endpoint with calendar tools.
 - `/api/health`: backend and database health.
 - `/api/docs`: Swagger UI.
 

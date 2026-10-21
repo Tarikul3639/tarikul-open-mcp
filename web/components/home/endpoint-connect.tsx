@@ -6,7 +6,7 @@ import { Check, Copy, Plug } from "lucide-react"
 const backendUrl =
   process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"
 
-const url = `${backendUrl}/api/mcp`
+const url = `${backendUrl}/mcp`
 
 export default function EndpointConnect() {
   const [copied, setCopied] = useState(false)
@@ -74,8 +74,8 @@ export default function EndpointConnect() {
 // import { Check, Copy, Plug } from "lucide-react";
 
 // const subscribe = () => () => { };
-// const getUrl = () => `${window.location.origin}/api/mcp`;
-// const getServerUrl = () => "/api/mcp";
+// const getUrl = () => `${window.location.origin}/mcp`;
+// const getServerUrl = () => "/mcp";
 
 // export default function EndpointConnect() {
 //   const url = useSyncExternalStore(subscribe, getUrl, getServerUrl);

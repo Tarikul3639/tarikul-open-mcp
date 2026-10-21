@@ -43,7 +43,7 @@ const STEPS = [
   {
     number: "02",
     title: "Connect an MCP client",
-    text: "Add this server’s remote endpoint to an MCP client that supports Streamable HTTP. The endpoint is on the current site at /api/mcp. The client discovers the OAuth sign-in flow automatically.",
+    text: "Add this server’s remote endpoint to an MCP client that supports Streamable HTTP. The endpoint is on the current site at /mcp. The client discovers the OAuth sign-in flow automatically.",
     Icon: KeyRound,
   },
   {
@@ -135,7 +135,7 @@ export default function DocsPage() {
               Endpoint
             </span>
             <code className="truncate text-sm text-white">
-              /api/mcp
+              /mcp
             </code>
           </div>
         </header>
