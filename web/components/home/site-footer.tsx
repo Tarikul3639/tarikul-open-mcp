@@ -31,6 +31,14 @@ export default function SiteFooter() {
                 {label}
               </Link>
             ))}
+            <a
+              href="https://github.com/Tarikul3639/tarikul-open-mcp"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-1 text-sm text-[#A5A5A5] transition-colors hover:text-[#F5C518]"
+            >
+              GitHub <ArrowUpRight size={14} aria-hidden="true" />
+            </a>
           </nav>
         </div>
 
