@@ -98,6 +98,8 @@ The web app uses `/api/auth/authorize/client` and `/api/auth/authorize/consent` 
 
 Each grant is specific to a user and OAuth client. Removing a client from that user's dashboard blocks its current access token and refresh attempts immediately. Connecting Google Calendar is a separate step from MCP client approval; calendar tools need a Calendar connection.
 
+For the sequence diagram and the frontend/backend component map, see the [MCP client authentication flow](../docs/mcp-client-auth-flow.md).
+
 ## Deployment notes
 
 Deploy the API separately from `web/`. Configure production values for `DATABASE_URL`, Google OAuth credentials and frontend-proxied callback URLs, `WEB_ORIGIN`, `MCP_ISSUER_URL`, `MCP_RESOURCE_URL`, and `MCP_AUTH_SECRET`. Set `CORS_ORIGINS` for any browser origins that call the API directly. Run `pnpm prisma:generate` and `pnpm prisma:migrate` during deployment.

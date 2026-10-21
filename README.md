@@ -37,6 +37,7 @@ A remote [Model Context Protocol (MCP)](https://modelcontextprotocol.io/) server
 | --- | --- | --- |
 | [`server/`](server/README.md) | NestJS API, PostgreSQL, Prisma, Google OAuth, and MCP tools | [Server README](server/README.md) |
 | [`web/`](web/README.md) | Next.js home page, dashboard, consent page, and docs | [Web README](web/README.md) |
+| [`docs/`](docs/mcp-client-auth-flow.md) | MCP client OAuth and request authentication flow | [MCP client auth flow](docs/mcp-client-auth-flow.md) |
 | `screenshots/` | Screenshots shown above | |
 
 Each app has its own `package.json`, dependencies, and lockfile. Install and run them from their own directories.
