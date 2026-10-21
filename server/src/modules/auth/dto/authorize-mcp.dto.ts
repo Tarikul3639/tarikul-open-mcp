@@ -51,6 +51,13 @@ export class AuthorizeMcpDto {
     @IsString()
     @MaxLength(2048)
     resource?: string;
+
+    // Optional OpenID Connect localization hint sent by some OAuth clients.
+    @ApiPropertyOptional({ example: 'en-US' })
+    @IsOptional()
+    @IsString()
+    @MaxLength(256)
+    ui_locales?: string;
 }
 
 export class ConsentDecisionDto extends AuthorizeMcpDto {
